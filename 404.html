@@ -130,41 +130,59 @@
   <!-- ===== SPA ROUTING SCRIPT ===== -->
   <!-- ===================================================== -->
   <script type="module">
-    import { loadAllComponents, navigateTo } from './components.js';
-    import { showToast } from './main.js';
+  import { loadAllComponents } from './components.js';
+  import { showToast, updateAuthUI, redirectTo } from './main.js';
 
-    // Load navbar, footer, floating buttons
-    loadAllComponents('404');
+  // Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyBOpiCSVD8O-uT4CR4_-e9kGpZ1uVHFG54",
+    authDomain: "easy-namjari.firebaseapp.com",
+    projectId: "easy-namjari",
+    storageBucket: "easy-namjari.firebasestorage.app",
+    messagingSenderId: "686038387625",
+    appId: "1:686038387625:web:2a8eebba1b771844fcd2b8"
+  };
 
-    // Countdown timer
-    let seconds = 5;
-    const countdownEl = document.getElementById('countdown');
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
 
-    const timer = setInterval(() => {
-      seconds--;
-      if (countdownEl) countdownEl.textContent = seconds;
-      if (seconds <= 0) {
-        clearInterval(timer);
-        navigateTo('index');
-      }
-    }, 1000);
+  // Update navbar based on auth state
+  auth.onAuthStateChanged((user) => {
+    updateAuthUI(user);
+  });
 
-    // Click handler for data-page links
-    document.addEventListener('click', (e) => {
-      const link = e.target.closest('a[data-page]');
-      if (link) {
-        e.preventDefault();
-        clearInterval(timer);
-        const page = link.getAttribute('data-page');
-        navigateTo(page);
-      }
-    });
+  // Load components
+  loadAllComponents('404');
 
-    // Backup: force redirect after 6 seconds
-    setTimeout(() => {
-      navigateTo('index');
-    }, 6000);
-  </script>
+  // Countdown timer
+  let seconds = 5;
+  const countdownEl = document.getElementById('countdown');
+
+  const timer = setInterval(() => {
+    seconds--;
+    if (countdownEl) countdownEl.textContent = seconds;
+    if (seconds <= 0) {
+      clearInterval(timer);
+      redirectTo('index');
+    }
+  }, 1000);
+
+  // Click handler for data-page links
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest('a[data-page]');
+    if (link) {
+      e.preventDefault();
+      clearInterval(timer);
+      const page = link.getAttribute('data-page');
+      redirectTo(page);
+    }
+  });
+
+  // Backup: force redirect after 6 seconds
+  setTimeout(() => {
+    redirectTo('index');
+  }, 6000);
+</script>
 
 </body>
 </html>

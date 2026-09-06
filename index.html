@@ -565,72 +565,90 @@
   <!-- ===================================================== -->
   <!-- ===== SCRIPTS (SPA disabled, normal page reload) ===== -->
   <!-- ===================================================== -->
-  <script type="module">
-    import { loadAllComponents } from './components.js';
-    import { showToast } from './main.js';
+ <script type="module">
+  import { loadAllComponents } from './components.js';
+  import { showToast, updateAuthUI } from './main.js';
 
-    // Load components (navbar, footer, floating buttons)
-    loadAllComponents('index');
+  // Load components (navbar, footer, floating buttons)
+  loadAllComponents('index');
 
-    // ===== Typing Animation =====
-    function initTyping() {
-      const typedText = document.getElementById('typedText');
-      if (!typedText) return;
-      const words = ['ঢাকা', 'সাভার'];
-      let wordIndex = 0, charIndex = 0, isDeleting = false;
-      
-      function typeEffect() {
-        const currentWord = words[wordIndex];
-        if (isDeleting) {
-          typedText.textContent = currentWord.substring(0, charIndex - 1);
-          charIndex--;
-        } else {
-          typedText.textContent = currentWord.substring(0, charIndex + 1);
-          charIndex++;
-        }
-        let speed = isDeleting ? 50 : 120;
-        if (!isDeleting && charIndex === currentWord.length) {
-          speed = 1500;
-          isDeleting = true;
-        } else if (isDeleting && charIndex === 0) {
-          isDeleting = false;
-          wordIndex = (wordIndex + 1) % words.length;
-          speed = 300;
-        }
-        setTimeout(typeEffect, speed);
+  // ===== Typing Animation =====
+  function initTyping() {
+    const typedText = document.getElementById('typedText');
+    if (!typedText) return;
+    const words = ['ঢাকা', 'সাভার'];
+    let wordIndex = 0, charIndex = 0, isDeleting = false;
+    
+    function typeEffect() {
+      const currentWord = words[wordIndex];
+      if (isDeleting) {
+        typedText.textContent = currentWord.substring(0, charIndex - 1);
+        charIndex--;
+      } else {
+        typedText.textContent = currentWord.substring(0, charIndex + 1);
+        charIndex++;
       }
-      typeEffect();
+      let speed = isDeleting ? 50 : 120;
+      if (!isDeleting && charIndex === currentWord.length) {
+        speed = 1500;
+        isDeleting = true;
+      } else if (isDeleting && charIndex === 0) {
+        isDeleting = false;
+        wordIndex = (wordIndex + 1) % words.length;
+        speed = 300;
+      }
+      setTimeout(typeEffect, speed);
     }
+    typeEffect();
+  }
 
-    // ===== FAQ Accordion =====
-    function initFaq() {
-      document.querySelectorAll('.faq-question').forEach(btn => {
-        btn.addEventListener('click', function() {
-          const answer = this.nextElementSibling;
-          const isOpen = answer.classList.contains('open');
-          document.querySelectorAll('.faq-answer').forEach(a => {
-            if (a !== answer) a.classList.remove('open');
-          });
-          document.querySelectorAll('.faq-question').forEach(b => {
-            if (b !== this) b.classList.remove('open');
-          });
-          if (!isOpen) {
-            answer.classList.add('open');
-            this.classList.add('open');
-          } else {
-            answer.classList.remove('open');
-            this.classList.remove('open');
-          }
+  // ===== FAQ Accordion =====
+  function initFaq() {
+    document.querySelectorAll('.faq-question').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const answer = this.nextElementSibling;
+        const isOpen = answer.classList.contains('open');
+        document.querySelectorAll('.faq-answer').forEach(a => {
+          if (a !== answer) a.classList.remove('open');
         });
+        document.querySelectorAll('.faq-question').forEach(b => {
+          if (b !== this) b.classList.remove('open');
+        });
+        if (!isOpen) {
+          answer.classList.add('open');
+          this.classList.add('open');
+        } else {
+          answer.classList.remove('open');
+          this.classList.remove('open');
+        }
       });
-    }
+    });
+  }
 
-    // Initialize on page load
-    if (document.getElementById('typedText')) {
-      initTyping();
-    }
-    initFaq();
-  </script>
+  // Initialize on page load
+  if (document.getElementById('typedText')) {
+    initTyping();
+  }
+  initFaq();
+
+  // ===== Firebase Auth for Navbar =====
+  const firebaseConfig = {
+    apiKey: "AIzaSyBOpiCSVD8O-uT4CR4_-e9kGpZ1uVHFG54",
+    authDomain: "easy-namjari.firebaseapp.com",
+    projectId: "easy-namjari",
+    storageBucket: "easy-namjari.firebasestorage.app",
+    messagingSenderId: "686038387625",
+    appId: "1:686038387625:web:2a8eebba1b771844fcd2b8"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+
+  // Update navbar based on auth state
+  auth.onAuthStateChanged((user) => {
+    updateAuthUI(user);
+  });
+</script>
 
 </body>
 </html>
