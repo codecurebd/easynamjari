@@ -33,237 +33,264 @@
     .status-approved { background: #dcfce7; color: #166534; }
     .status-rejected { background: #fee2e2; color: #991b1b; }
     .status-progress { background: #dbeafe; color: #1e40af; }
-    .floating-btn { transition: all 0.3s; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
-    .floating-btn:hover { transform: scale(1.1); }
     .hidden { display: none !important; }
   </style>
 </head>
 <body>
 
-<!-- ===== SIDEBAR ===== -->
-<nav id="sidebar" class="sidebar">
-  <div class="p-6 flex items-center gap-3 border-b border-white/10">
-    <img src="https://res.cloudinary.com/zmoyykj7/image/upload/v1788432073/v2am9blsmmmcul9nycyz.png" alt="লোগো" class="h-10" />
-    <span class="text-xl font-bold">ইজি <span class="text-[#60a5fa]">নামজারি</span></span>
-  </div>
-  <div class="p-4 space-y-2">
-    <a href="#" class="sidebar-item active"><i class="fas fa-chart-pie"></i> ড্যাশবোর্ড</a>
-    <a href="#" class="sidebar-item"><i class="fas fa-file-alt"></i> আবেদনসমূহ <span class="badge">১২</span></a>
-    <a href="#" class="sidebar-item"><i class="fas fa-users"></i> ইউজার</a>
-    <a href="#" class="sidebar-item"><i class="fas fa-cog"></i> সেটিংস</a>
-    <a href="#" class="sidebar-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> লগআউট</a>
-  </div>
-  <div class="absolute bottom-6 left-0 right-0 text-center text-xs text-gray-400">v1.0 | CodeCureBD</div>
-</nav>
+  <!-- ===== PAGE CONTENT (SPA) ===== -->
+  <div id="page-content">
 
-<!-- ===== MAIN ===== -->
-<div class="main-content">
+    <!-- ===== SIDEBAR ===== -->
+    <nav id="sidebar" class="sidebar">
+      <div class="p-6 flex items-center gap-3 border-b border-white/10">
+        <img src="https://res.cloudinary.com/zmoyykj7/image/upload/v1788432073/v2am9blsmmmcul9nycyz.png" alt="লোগো" class="h-10" />
+        <span class="text-xl font-bold">ইজি <span class="text-[#60a5fa]">নামজারি</span></span>
+      </div>
+      <div class="p-4 space-y-2">
+        <a href="#" class="sidebar-item active"><i class="fas fa-chart-pie"></i> ড্যাশবোর্ড</a>
+        <a href="#" class="sidebar-item"><i class="fas fa-file-alt"></i> আবেদনসমূহ <span class="badge">১২</span></a>
+        <a href="#" class="sidebar-item"><i class="fas fa-users"></i> ইউজার</a>
+        <a href="#" class="sidebar-item"><i class="fas fa-cog"></i> সেটিংস</a>
+        <a href="#" class="sidebar-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> লগআউট</a>
+      </div>
+      <div class="absolute bottom-6 left-0 right-0 text-center text-xs text-gray-400">v1.0 | CodeCureBD</div>
+    </nav>
 
-  <!-- Top Navbar -->
-  <nav class="bg-white shadow-sm rounded-2xl p-4 flex justify-between items-center mb-6">
-    <div class="flex items-center gap-4">
-      <button id="sidebarToggle" class="md:hidden bg-[#0b2b4a] text-white p-2 rounded-lg">
-        <i class="fas fa-bars text-xl"></i>
-      </button>
-      <h1 class="text-2xl font-bold text-[#0b2b4a] hidden sm:block">ড্যাশবোর্ড</h1>
+    <!-- ===== MAIN ===== -->
+    <div class="main-content">
+
+      <!-- Top Navbar -->
+      <nav class="bg-white shadow-sm rounded-2xl p-4 flex justify-between items-center mb-6">
+        <div class="flex items-center gap-4">
+          <button id="sidebarToggle" class="md:hidden bg-[#0b2b4a] text-white p-2 rounded-lg">
+            <i class="fas fa-bars text-xl"></i>
+          </button>
+          <h1 class="text-2xl font-bold text-[#0b2b4a] hidden sm:block">ড্যাশবোর্ড</h1>
+        </div>
+        <div class="flex items-center gap-4">
+          <span id="adminName" class="text-sm text-gray-600 hidden sm:inline"></span>
+          <div id="adminAvatar" class="w-10 h-10 rounded-full bg-[#1e40af] text-white flex items-center justify-center font-bold"></div>
+        </div>
+      </nav>
+
+      <!-- ===== ACCESS DENIED (non-admin) - Redirect to profile ===== -->
+      <div id="accessDenied" class="bg-white rounded-3xl shadow-xl p-12 text-center border border-gray-200 hidden">
+        <i class="fas fa-lock text-6xl text-red-500 mb-4"></i>
+        <h2 class="text-2xl font-bold text-[#0b2b4a]">অ্যাক্সেস অস্বীকৃত</h2>
+        <p class="text-gray-600 mt-2">আপনার এই পৃষ্ঠাটি দেখার অনুমতি নেই। শুধুমাত্র অ্যাডমিন ইউজাররা প্রবেশ করতে পারেন।</p>
+        <a href="profile.html" class="inline-block mt-6 bg-[#0b2b4a] text-white px-6 py-3 rounded-xl hover:bg-[#1e40af] transition" data-page="profile">
+          <i class="fas fa-arrow-left"></i> প্রোফাইল পেজে যান
+        </a>
+      </div>
+
+      <!-- ===== ADMIN CONTENT ===== -->
+      <div id="adminContent" class="hidden">
+
+        <!-- Stats -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div class="stat-card">
+            <div class="flex justify-between"><span class="text-sm font-medium text-gray-500">মোট আবেদন</span><i class="fas fa-file-alt text-[#1e40af]"></i></div>
+            <div class="text-3xl font-bold text-[#0b2b4a] mt-2">১২</div>
+            <div class="text-xs text-green-600"><i class="fas fa-arrow-up"></i> +২ নতুন</div>
+          </div>
+          <div class="stat-card">
+            <div class="flex justify-between"><span class="text-sm font-medium text-gray-500">প্রক্রিয়াধীন</span><i class="fas fa-spinner text-yellow-500"></i></div>
+            <div class="text-3xl font-bold text-[#0b2b4a] mt-2">৫</div>
+            <div class="text-xs text-gray-500">জটিলতা অনুযায়ী</div>
+          </div>
+          <div class="stat-card">
+            <div class="flex justify-between"><span class="text-sm font-medium text-gray-500">সম্পন্ন</span><i class="fas fa-check-circle text-green-600"></i></div>
+            <div class="text-3xl font-bold text-[#0b2b4a] mt-2">৬</div>
+            <div class="text-xs text-green-600"><i class="fas fa-check"></i> DCR প্রদান</div>
+          </div>
+          <div class="stat-card">
+            <div class="flex justify-between"><span class="text-sm font-medium text-gray-500">বাতিল</span><i class="fas fa-times-circle text-red-500"></i></div>
+            <div class="text-3xl font-bold text-[#0b2b4a] mt-2">১</div>
+            <div class="text-xs text-red-600">কাগজপত্র অসম্পূর্ণ</div>
+          </div>
+        </div>
+
+        <!-- Recent Applications -->
+        <div class="bg-white rounded-2xl border border-gray-200 p-6">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold text-[#0b2b4a]">সাম্প্রতিক আবেদন</h3>
+            <a href="#" class="text-sm text-[#1e40af] font-semibold hover:underline">সব দেখুন</a>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead>
+                <tr>
+                  <th class="text-left py-3 px-3 font-semibold text-gray-500 border-b">নাম</th>
+                  <th class="text-left py-3 px-3 font-semibold text-gray-500 border-b hidden sm:table-cell">মোবাইল</th>
+                  <th class="text-left py-3 px-3 font-semibold text-gray-500 border-b hidden md:table-cell">মৌজা</th>
+                  <th class="text-left py-3 px-3 font-semibold text-gray-500 border-b">স্ট্যাটাস</th>
+                  <th class="text-left py-3 px-3 font-semibold text-gray-500 border-b hidden lg:table-cell">তারিখ</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="py-3 px-3 font-medium">আব্দুল হালিম</td>
+                  <td class="py-3 px-3 hidden sm:table-cell">০১৭১২-৩৪৫৬৭৮</td>
+                  <td class="py-3 px-3 hidden md:table-cell">সাভার মডেল</td>
+                  <td class="py-3 px-3"><span class="status-badge status-pending">পেন্ডিং</span></td>
+                  <td class="py-3 px-3 hidden lg:table-cell">২৬-০৩-২০২৬</td>
+                </tr>
+                <tr>
+                  <td class="py-3 px-3 font-medium">ফাতেমা বেগম</td>
+                  <td class="py-3 px-3 hidden sm:table-cell">০১৯১১-২২৩৩৪৪</td>
+                  <td class="py-3 px-3 hidden md:table-cell">আশুলিয়া</td>
+                  <td class="py-3 px-3"><span class="status-badge status-progress">প্রক্রিয়াধীন</span></td>
+                  <td class="py-3 px-3 hidden lg:table-cell">২৫-০৩-২০২৬</td>
+                </tr>
+                <tr>
+                  <td class="py-3 px-3 font-medium">মো. রফিকুল ইসলাম</td>
+                  <td class="py-3 px-3 hidden sm:table-cell">০১৩৫০-১৪১৭৬২</td>
+                  <td class="py-3 px-3 hidden md:table-cell">সাভার পৌর</td>
+                  <td class="py-3 px-3"><span class="status-badge status-approved">সম্পন্ন</span></td>
+                  <td class="py-3 px-3 hidden lg:table-cell">২৪-০৩-২০২৬</td>
+                </tr>
+                <tr>
+                  <td class="py-3 px-3 font-medium">নাজমা আক্তার</td>
+                  <td class="py-3 px-3 hidden sm:table-cell">০১৬৭৭-৮৮৯৯০০</td>
+                  <td class="py-3 px-3 hidden md:table-cell">কামারপাড়া</td>
+                  <td class="py-3 px-3"><span class="status-badge status-rejected">বাতিল</span></td>
+                  <td class="py-3 px-3 hidden lg:table-cell">২৩-০৩-২০২৬</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div><!-- end adminContent -->
+
+      <p class="text-center text-sm text-gray-500 mt-8">© 2026 Easy Namjari | Managed by: CodeCureBD</p>
     </div>
-    <div class="flex items-center gap-4">
-      <span id="adminName" class="text-sm text-gray-600 hidden sm:inline"></span>
-      <div id="adminAvatar" class="w-10 h-10 rounded-full bg-[#1e40af] text-white flex items-center justify-center font-bold"></div>
-    </div>
-  </nav>
 
-  <!-- ===== ACCESS DENIED (non-admin) - Redirect to profile ===== -->
-  <div id="accessDenied" class="bg-white rounded-3xl shadow-xl p-12 text-center border border-gray-200 hidden">
-    <i class="fas fa-lock text-6xl text-red-500 mb-4"></i>
-    <h2 class="text-2xl font-bold text-[#0b2b4a]">অ্যাক্সেস অস্বীকৃত</h2>
-    <p class="text-gray-600 mt-2">আপনার এই পৃষ্ঠাটি দেখার অনুমতি নেই। শুধুমাত্র অ্যাডমিন ইউজাররা প্রবেশ করতে পারেন।</p>
-    <a href="profile.html" class="inline-block mt-6 bg-[#0b2b4a] text-white px-6 py-3 rounded-xl hover:bg-[#1e40af] transition">
-      <i class="fas fa-arrow-left"></i> প্রোফাইল পেজে যান
-    </a>
-  </div>
+  </div> <!-- end page-content -->
 
-  <!-- ===== ADMIN CONTENT ===== -->
-  <div id="adminContent" class="hidden">
+  <!-- ===================================================== -->
+  <!-- ===== SCRIPTS ===== -->
+  <!-- ===================================================== -->
+  <script type="module">
+    import { loadAllComponents, navigateTo } from './components.js';
+    import { showToast } from './main.js';
 
-    <!-- Stats -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-      <div class="stat-card">
-        <div class="flex justify-between"><span class="text-sm font-medium text-gray-500">মোট আবেদন</span><i class="fas fa-file-alt text-[#1e40af]"></i></div>
-        <div class="text-3xl font-bold text-[#0b2b4a] mt-2">১২</div>
-        <div class="text-xs text-green-600"><i class="fas fa-arrow-up"></i> +২ নতুন</div>
-      </div>
-      <div class="stat-card">
-        <div class="flex justify-between"><span class="text-sm font-medium text-gray-500">প্রক্রিয়াধীন</span><i class="fas fa-spinner text-yellow-500"></i></div>
-        <div class="text-3xl font-bold text-[#0b2b4a] mt-2">৫</div>
-        <div class="text-xs text-gray-500">জটিলতা অনুযায়ী</div>
-      </div>
-      <div class="stat-card">
-        <div class="flex justify-between"><span class="text-sm font-medium text-gray-500">সম্পন্ন</span><i class="fas fa-check-circle text-green-600"></i></div>
-        <div class="text-3xl font-bold text-[#0b2b4a] mt-2">৬</div>
-        <div class="text-xs text-green-600"><i class="fas fa-check"></i> DCR প্রদান</div>
-      </div>
-      <div class="stat-card">
-        <div class="flex justify-between"><span class="text-sm font-medium text-gray-500">বাতিল</span><i class="fas fa-times-circle text-red-500"></i></div>
-        <div class="text-3xl font-bold text-[#0b2b4a] mt-2">১</div>
-        <div class="text-xs text-red-600">কাগজপত্র অসম্পূর্ণ</div>
-      </div>
-    </div>
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyBOpiCSVD8O-uT4CR4_-e9kGpZ1uVHFG54",
+      authDomain: "easy-namjari.firebaseapp.com",
+      projectId: "easy-namjari",
+      storageBucket: "easy-namjari.firebasestorage.app",
+      messagingSenderId: "686038387625",
+      appId: "1:686038387625:web:2a8eebba1b771844fcd2b8"
+    };
 
-    <!-- Recent Applications -->
-    <div class="bg-white rounded-2xl border border-gray-200 p-6">
-      <div class="flex justify-between items-center mb-4">
-        <h3 class="text-xl font-bold text-[#0b2b4a]">সাম্প্রতিক আবেদন</h3>
-        <a href="#" class="text-sm text-[#1e40af] font-semibold hover:underline">সব দেখুন</a>
-      </div>
-      <div class="overflow-x-auto">
-        <table class="w-full">
-          <thead>
-            <tr>
-              <th class="text-left py-3 px-3 font-semibold text-gray-500 border-b">নাম</th>
-              <th class="text-left py-3 px-3 font-semibold text-gray-500 border-b hidden sm:table-cell">মোবাইল</th>
-              <th class="text-left py-3 px-3 font-semibold text-gray-500 border-b hidden md:table-cell">মৌজা</th>
-              <th class="text-left py-3 px-3 font-semibold text-gray-500 border-b">স্ট্যাটাস</th>
-              <th class="text-left py-3 px-3 font-semibold text-gray-500 border-b hidden lg:table-cell">তারিখ</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="py-3 px-3 font-medium">আব্দুল হালিম</td>
-              <td class="py-3 px-3 hidden sm:table-cell">০১৭১২-৩৪৫৬৭৮</td>
-              <td class="py-3 px-3 hidden md:table-cell">সাভার মডেল</td>
-              <td class="py-3 px-3"><span class="status-badge status-pending">পেন্ডিং</span></td>
-              <td class="py-3 px-3 hidden lg:table-cell">২৬-০৩-২০২৬</td>
-            </tr>
-            <tr>
-              <td class="py-3 px-3 font-medium">ফাতেমা বেগম</td>
-              <td class="py-3 px-3 hidden sm:table-cell">০১৯১১-২২৩৩৪৪</td>
-              <td class="py-3 px-3 hidden md:table-cell">আশুলিয়া</td>
-              <td class="py-3 px-3"><span class="status-badge status-progress">প্রক্রিয়াধীন</span></td>
-              <td class="py-3 px-3 hidden lg:table-cell">২৫-০৩-২০২৬</td>
-            </tr>
-            <tr>
-              <td class="py-3 px-3 font-medium">মো. রফিকুল ইসলাম</td>
-              <td class="py-3 px-3 hidden sm:table-cell">০১৩৫০-১৪১৭৬২</td>
-              <td class="py-3 px-3 hidden md:table-cell">সাভার পৌর</td>
-              <td class="py-3 px-3"><span class="status-badge status-approved">সম্পন্ন</span></td>
-              <td class="py-3 px-3 hidden lg:table-cell">২৪-০৩-২০২৬</td>
-            </tr>
-            <tr>
-              <td class="py-3 px-3 font-medium">নাজমা আক্তার</td>
-              <td class="py-3 px-3 hidden sm:table-cell">০১৬৭৭-৮৮৯৯০০</td>
-              <td class="py-3 px-3 hidden md:table-cell">কামারপাড়া</td>
-              <td class="py-3 px-3"><span class="status-badge status-rejected">বাতিল</span></td>
-              <td class="py-3 px-3 hidden lg:table-cell">২৩-০৩-২০২৬</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-  </div><!-- end adminContent -->
+    // Load components (navbar, footer, floating buttons)
+    // For admin page, we don't want the standard navbar, we have sidebar
+    // So we only load footer and floating buttons
+    // We'll handle navbar separately
+    loadAllComponents('admin');
 
-  <p class="text-center text-sm text-gray-500 mt-8">© 2026 Easy Namjari | Managed by: CodeCureBD</p>
-</div>
+    // DOM refs
+    const sidebar = document.getElementById('sidebar');
+    const toggleBtn = document.getElementById('sidebarToggle');
+    const adminContent = document.getElementById('adminContent');
+    const accessDenied = document.getElementById('accessDenied');
+    const adminName = document.getElementById('adminName');
+    const adminAvatar = document.getElementById('adminAvatar');
+    const logoutBtn = document.getElementById('logoutBtn');
 
-<!-- ===== FLOATING CONTACT ===== -->
-<div class="fixed bottom-6 right-4 flex flex-col gap-3 z-50">
-  <a href="tel:01350141762" class="floating-btn bg-[#0b2b4a] text-white p-4 rounded-full shadow-2xl hover:bg-[#1e40af] transition flex items-center justify-center w-14 h-14"><i class="fas fa-phone text-2xl"></i></a>
-  <a href="https://wa.me/8801350141762" class="floating-btn bg-green-500 text-white p-4 rounded-full shadow-2xl hover:bg-green-600 transition flex items-center justify-center w-14 h-14"><i class="fab fa-whatsapp text-2xl"></i></a>
-</div>
-
-<!-- ===================================================== -->
-<!-- ===== FIREBASE SCRIPT ===== -->
-<!-- ===================================================== -->
-<script>
-  // Firebase Config
-  const firebaseConfig = {
-    apiKey: "AIzaSyBOpiCSVD8O-uT4CR4_-e9kGpZ1uVHFG54",
-    authDomain: "easy-namjari.firebaseapp.com",
-    projectId: "easy-namjari",
-    storageBucket: "easy-namjari.firebasestorage.app",
-    messagingSenderId: "686038387625",
-    appId: "1:686038387625:web:2a8eebba1b771844fcd2b8"
-  };
-
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-
-  // DOM refs
-  const sidebar = document.getElementById('sidebar');
-  const toggleBtn = document.getElementById('sidebarToggle');
-  const adminContent = document.getElementById('adminContent');
-  const accessDenied = document.getElementById('accessDenied');
-  const adminName = document.getElementById('adminName');
-  const adminAvatar = document.getElementById('adminAvatar');
-  const logoutBtn = document.getElementById('logoutBtn');
-
-  // --- SIDEBAR TOGGLE ---
-  toggleBtn.addEventListener('click', () => sidebar.classList.toggle('open'));
-  document.addEventListener('click', (e) => {
-    if (window.innerWidth < 768 && !sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
-      sidebar.classList.remove('open');
-    }
-  });
-
-  // --- CHECK ADMIN ROLE & REDIRECT NON-ADMIN TO PROFILE ---
-  async function checkAdmin(user) {
-    if (!user) {
-      // Not logged in → redirect to auth page
-      window.location.href = 'auth.html';
-      return;
-    }
-
-    try {
-      const tokenResult = await user.getIdTokenResult();
-      const isAdmin = tokenResult.claims.admin === true;
-
-      if (isAdmin) {
-        // Admin: show panel
-        adminContent.classList.remove('hidden');
-        accessDenied.classList.add('hidden');
-        adminName.textContent = user.displayName || 'অ্যাডমিন';
-        adminAvatar.textContent = (user.displayName || 'A').charAt(0).toUpperCase();
-      } else {
-        // Non-admin: redirect to profile page (instead of showing access denied)
-        window.location.href = 'profile.html';
+    // --- SIDEBAR TOGGLE ---
+    toggleBtn.addEventListener('click', () => sidebar.classList.toggle('open'));
+    document.addEventListener('click', (e) => {
+      if (window.innerWidth < 768 && !sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+        sidebar.classList.remove('open');
       }
-    } catch (error) {
-      console.error('Error checking admin role:', error);
-      // On error, redirect to profile as fallback
-      window.location.href = 'profile.html';
-    }
-  }
-
-  // --- AUTH STATE LISTENER ---
-  auth.onAuthStateChanged((user) => {
-    if (user) {
-      checkAdmin(user);
-    } else {
-      // Not logged in: go to auth
-      window.location.href = 'auth.html';
-    }
-  });
-
-  // --- LOGOUT ---
-  logoutBtn.addEventListener('click', async () => {
-    try {
-      await auth.signOut();
-      window.location.href = 'auth.html';
-    } catch (error) {
-      console.error('Logout error:', error);
-      alert('লগআউট ব্যর্থ হয়েছে। আবার চেষ্টা করুন।');
-    }
-  });
-
-  // --- SIDEBAR ACTIVE LINK ---
-  document.querySelectorAll('.sidebar-item').forEach(item => {
-    item.addEventListener('click', function() {
-      document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
-      this.classList.add('active');
     });
-  });
-</script>
+
+    // --- CHECK ADMIN ROLE & REDIRECT NON-ADMIN TO PROFILE ---
+    async function checkAdmin(user) {
+      if (!user) {
+        window.location.href = 'auth.html';
+        return;
+      }
+
+      try {
+        // First check Firestore userType
+        const docRef = db.collection('users').doc(user.uid);
+        const docSnap = await docRef.get();
+        let isAdmin = false;
+        if (docSnap.exists) {
+          const userData = docSnap.data();
+          isAdmin = userData.userType === 'admin';
+        }
+
+        if (isAdmin) {
+          adminContent.classList.remove('hidden');
+          accessDenied.classList.add('hidden');
+          adminName.textContent = user.displayName || 'অ্যাডমিন';
+          adminAvatar.textContent = (user.displayName || 'A').charAt(0).toUpperCase();
+        } else {
+          // Non-admin: redirect to profile
+          navigateTo('profile');
+        }
+      } catch (error) {
+        console.error('Error checking admin role:', error);
+        navigateTo('profile');
+      }
+    }
+
+    // --- AUTH STATE LISTENER ---
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        checkAdmin(user);
+      } else {
+        window.location.href = 'auth.html';
+      }
+    });
+
+    // --- LOGOUT ---
+    logoutBtn.addEventListener('click', async () => {
+      try {
+        await auth.signOut();
+        navigateTo('auth');
+      } catch (error) {
+        console.error('Logout error:', error);
+        showToast('লগআউট ব্যর্থ হয়েছে', 'error');
+      }
+    });
+
+    // --- SIDEBAR ACTIVE LINK ---
+    document.querySelectorAll('.sidebar-item').forEach(item => {
+      item.addEventListener('click', function() {
+        document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // SPA routing: handle data-page links
+    document.addEventListener('click', (e) => {
+      const link = e.target.closest('a[data-page]');
+      if (link) {
+        e.preventDefault();
+        const page = link.getAttribute('data-page');
+        navigateTo(page);
+      }
+    });
+
+    // Hide the default navbar's login button since we are in admin panel
+    // This will be handled by components.js but we can add a small fix
+    // After components are loaded, hide the login button
+    setTimeout(() => {
+      const loginBtn = document.querySelector('a[href="auth.html"]');
+      if (loginBtn) loginBtn.style.display = 'none';
+    }, 100);
+  </script>
 
 </body>
 </html>

@@ -1,14 +1,122 @@
 // components.js
 // ============================================
 // এই ফাইলটি সব পেজে কমন এলিমেন্ট (নেভবার, ফুটার, ফ্লোটিং বাটন) 
-// ডাইনামিকভাবে লোড করার জন্য তৈরি।
+// ডাইনামিকভাবে লোড করে এবং SPA-র মতো নেভিগেশন সাপোর্ট করে।
 // ব্যবহার: প্রতিটি HTML পেজে <script type="module"> এর ভেতর 
-// import { loadNavbar, loadFooter, loadFloatingButtons } from './components.js';
+// import { loadAllComponents, navigateTo, initRouter } from './components.js';
 // ============================================
 
 /**
- * নেভবার লোড করে
- * @param {string} currentPage - বর্তমান পেজের নাম (যেমন: 'index', 'contact', 'auth', 'profile', 'admin')
+ * ===== SPA রাউটিং ফাংশন =====
+ */
+
+// কন্টেন্ট কন্টেইনার আইডি (প্রতিটি পেজে এই আইডি থাকতে হবে)
+const CONTENT_ID = 'page-content';
+
+// বর্তমান পেজের নাম (URL থেকে বের করা)
+function getCurrentPage() {
+  const path = window.location.pathname;
+  const page = path.split('/').pop().replace('.html', '') || 'index';
+  return page;
+}
+
+// পেজ কন্টেন্ট লোড করা (AJAX)
+export async function loadPage(page) {
+  try {
+    const response = await fetch(page + '.html');
+    if (!response.ok) throw new Error('Page not found');
+    const html = await response.text();
+    
+    // HTML থেকে শুধু #page-content অংশ বের করা
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const content = doc.getElementById(CONTENT_ID);
+    
+    if (!content) {
+      // যদি #page-content না থাকে, পুরো body নাও (backup)
+      const bodyContent = doc.body.innerHTML;
+      document.getElementById(CONTENT_ID).innerHTML = bodyContent;
+    } else {
+      document.getElementById(CONTENT_ID).innerHTML = content.innerHTML;
+    }
+
+    // পেজ লোড হওয়ার পর স্ক্রল টু টপ
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // অ্যাক্টিভ লিংক আপডেট করা
+    updateActiveLink(page);
+
+    return true;
+  } catch (error) {
+    console.error('Error loading page:', error);
+    // 404 পেজ দেখানো (ঐচ্ছিক)
+    document.getElementById(CONTENT_ID).innerHTML = `
+      <div class="container mx-auto px-4 py-20 text-center">
+        <i class="fas fa-exclamation-triangle text-6xl text-red-500 mb-4"></i>
+        <h2 class="text-3xl font-bold text-[#0b2b4a]">পেজ খুঁজে পাওয়া যায়নি</h2>
+        <p class="text-gray-600 mt-2">আপনি যে পেজটি খুঁজছেন তা নেই।</p>
+        <a href="index.html" class="inline-block mt-6 bg-[#0b2b4a] text-white px-6 py-3 rounded-xl hover:bg-[#1e40af] transition">হোমে যান</a>
+      </div>
+    `;
+    return false;
+  }
+}
+
+// নেভিগেট করা (URL আপডেট + কন্টেন্ট লোড)
+export function navigateTo(page) {
+  // যদি একই পেজে থাকি, কিছু করো না
+  if (page === getCurrentPage()) return;
+
+  // URL আপডেট (history push)
+  const url = page + '.html';
+  history.pushState({ page }, '', url);
+
+  // কন্টেন্ট লোড
+  loadPage(page);
+}
+
+// অ্যাক্টিভ লিংক আপডেট করা
+function updateActiveLink(page) {
+  document.querySelectorAll('.nav-link').forEach(link => {
+    const linkPage = link.getAttribute('data-page');
+    if (linkPage === page) {
+      link.classList.add('text-[#1e40af]');
+      link.classList.remove('text-gray-700');
+    } else {
+      link.classList.remove('text-[#1e40af]');
+      link.classList.add('text-gray-700');
+    }
+  });
+}
+
+// ব্রাউজারের ব্যাক/ফরওয়ার্ড বাটন হ্যান্ডেল করা
+export function initRouter() {
+  window.addEventListener('popstate', (event) => {
+    const page = event.state?.page || getCurrentPage();
+    loadPage(page);
+  });
+
+  // পেজ লোডের সময় বর্তমান URL অনুযায়ী কন্টেন্ট লোড (যদি index না হয়)
+  const currentPage = getCurrentPage();
+  if (currentPage !== 'index') {
+    // index পেজে ডিফল্ট কন্টেন্ট থাকবে, অন্য পেজে লোড করতে হবে
+    loadPage(currentPage);
+  }
+
+  // নেভবারের লিংকগুলোতে ক্লিক হ্যান্ডলার যোগ করা (ডেলিগেশন)
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest('.nav-link[data-page]');
+    if (link) {
+      e.preventDefault();
+      const page = link.getAttribute('data-page');
+      navigateTo(page);
+    }
+  });
+}
+
+/**
+ * ===== নেভবার লোড =====
+ * @param {string} currentPage - বর্তমান পেজের নাম
  */
 export function loadNavbar(currentPage = 'index') {
   const navbarHTML = `
@@ -19,10 +127,10 @@ export function loadNavbar(currentPage = 'index') {
           <span class="text-xl sm:text-3xl font-bold text-[#0b2b4a]">Easy <span class="text-[#1e40af]">Namjari</span></span>
         </a>
         <div class="flex items-center gap-3 sm:gap-6 text-sm sm:text-lg flex-wrap">
-          <a href="index.html" class="nav-link text-gray-700 font-medium ${currentPage === 'index' ? 'text-[#1e40af]' : ''}">হোম</a>
-          <a href="profile.html" class="nav-link text-gray-700 font-medium ${currentPage === 'profile' ? 'text-[#1e40af]' : ''}">প্রোফাইল</a>
-          <a href="contact.html" class="nav-link text-gray-700 font-medium ${currentPage === 'contact' ? 'text-[#1e40af]' : ''}">যোগাযোগ</a>
-          <a href="auth.html" class="bg-[#0b2b4a] text-white px-4 sm:px-7 py-2 sm:py-3 rounded-2xl font-semibold flex items-center gap-1 sm:gap-2 hover:bg-[#1e40af] transition text-sm sm:text-base">
+          <a href="index.html" data-page="index" class="nav-link text-gray-700 font-medium ${currentPage === 'index' ? 'text-[#1e40af]' : ''}">হোম</a>
+          <a href="profile.html" data-page="profile" class="nav-link text-gray-700 font-medium ${currentPage === 'profile' ? 'text-[#1e40af]' : ''}">প্রোফাইল</a>
+          <a href="contact.html" data-page="contact" class="nav-link text-gray-700 font-medium ${currentPage === 'contact' ? 'text-[#1e40af]' : ''}">যোগাযোগ</a>
+          <a href="auth.html" data-page="auth" class="bg-[#0b2b4a] text-white px-4 sm:px-7 py-2 sm:py-3 rounded-2xl font-semibold flex items-center gap-1 sm:gap-2 hover:bg-[#1e40af] transition text-sm sm:text-base">
             <i class="fas fa-sign-in-alt"></i> <span class="hidden xs:inline">লগইন</span>
           </a>
         </div>
@@ -30,16 +138,14 @@ export function loadNavbar(currentPage = 'index') {
     </nav>
   `;
 
-  // যদি Navbar ইতিমধ্যে থাকে তবে প্রতিস্থাপন করবে, নইলে যোগ করবে
   const existingNav = document.querySelector('nav.bg-white.shadow-lg');
   if (existingNav) {
     existingNav.outerHTML = navbarHTML;
   } else {
-    // body-র শুরুতে যোগ করবে
     document.body.insertAdjacentHTML('afterbegin', navbarHTML);
   }
 
-  // নেভবার লিংক অ্যানিমেশন স্টাইল যোগ করা (যদি না থাকে)
+  // নেভবার লিংক অ্যানিমেশন স্টাইল (যদি না থাকে)
   if (!document.getElementById('nav-style')) {
     const style = document.createElement('style');
     style.id = 'nav-style';
@@ -55,7 +161,7 @@ export function loadNavbar(currentPage = 'index') {
 }
 
 /**
- * ফুটার লোড করে
+ * ===== ফুটার লোড =====
  */
 export function loadFooter() {
   const footerHTML = `
@@ -101,7 +207,7 @@ export function loadFooter() {
 }
 
 /**
- * ফ্লোটিং কন্টাক্ট বাটন লোড করে
+ * ===== ফ্লোটিং কন্টাক্ট বাটন =====
  */
 export function loadFloatingButtons() {
   const floatingHTML = `
@@ -115,7 +221,6 @@ export function loadFloatingButtons() {
     </div>
   `;
 
-  // স্টাইল যোগ করা (যদি না থাকে)
   if (!document.getElementById('floating-style')) {
     const style = document.createElement('style');
     style.id = 'floating-style';
@@ -135,11 +240,12 @@ export function loadFloatingButtons() {
 }
 
 /**
- * সব কম্পোনেন্ট একসাথে লোড করে
+ * ===== সব কম্পোনেন্ট লোড + রাউটার ইনিশিয়ালাইজ =====
  * @param {string} currentPage - বর্তমান পেজের নাম
  */
 export function loadAllComponents(currentPage = 'index') {
   loadNavbar(currentPage);
   loadFooter();
   loadFloatingButtons();
+  initRouter(); // SPA রাউটার চালু
 }

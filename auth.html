@@ -18,12 +18,6 @@
   <style>
     body { font-family: 'Inter', sans-serif; background: #f8fafc; }
     .hero-gradient { background: linear-gradient(160deg, #0b2b4a 0%, #1a4b7a 40%, #1e40af 100%); }
-    .nav-link { transition: all 0.3s ease; position: relative; }
-    .nav-link::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background: #1e40af; transition: width 0.3s ease; }
-    .nav-link:hover::after { width: 100%; }
-    .nav-link:hover { color: #1e40af; }
-    .floating-btn { transition: all 0.3s ease; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
-    .floating-btn:hover { transform: scale(1.1); }
     .auth-card { transition: all 0.3s ease; }
     .auth-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -12px rgba(0,0,0,0.1); }
     .form-input:focus { outline: none; border-color: #1e40af; box-shadow: 0 0 0 3px rgba(30,64,175,0.1); }
@@ -43,576 +37,452 @@
     .success-msg.show { display: block; }
     .loading-spinner { display: none; }
     .loading-spinner.show { display: inline-block; }
-    .user-avatar { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid #e2e8f0; }
-    .hidden { display: none !important; }
   </style>
 </head>
 <body>
 
-<!-- ===== Navbar (will be replaced by components.js) ===== -->
-<nav id="navbar-placeholder" class="bg-white shadow-lg sticky top-0 z-50">
-  <div class="container mx-auto px-4 sm:px-6 py-4 flex justify-between items-center flex-wrap gap-3">
-    <a href="index.html" class="flex items-center gap-2 sm:gap-3">
-      <img src="https://res.cloudinary.com/zmoyykj7/image/upload/v1788432073/v2am9blsmmmcul9nycyz.png" alt="ইজি নামজারি" class="h-9 sm:h-11" />
-      <span class="text-xl sm:text-3xl font-bold text-[#0b2b4a]">Easy <span class="text-[#1e40af]">Namjari</span></span>
-    </a>
-    <div class="flex items-center gap-3 sm:gap-6 text-sm sm:text-lg flex-wrap">
-      <a href="index.html" class="nav-link text-gray-700 font-medium">হোম</a>
-      <a href="contact.html" class="nav-link text-gray-700 font-medium">যোগাযোগ</a>
-      <a href="auth.html" class="bg-[#0b2b4a] text-white px-4 sm:px-7 py-2 sm:py-3 rounded-2xl font-semibold flex items-center gap-1 sm:gap-2 hover:bg-[#1e40af] transition text-sm sm:text-base">
-        <i class="fas fa-sign-in-alt"></i> <span class="hidden xs:inline">লগইন</span>
-      </a>
-    </div>
-  </div>
-</nav>
+  <!-- ===== PAGE CONTENT (SPA) ===== -->
+  <div id="page-content">
 
-<!-- ===== Hero ===== -->
-<section class="hero-gradient py-12 sm:py-16 text-white">
-  <div class="container mx-auto px-4 sm:px-6 text-center">
-    <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold">স্বাগতম</h1>
-    <p class="text-base sm:text-xl text-white/80 max-w-2xl mx-auto mt-3">
-      আপনার অ্যাকাউন্টে প্রবেশ করুন অথবা নতুন অ্যাকাউন্ট তৈরি করুন।
-    </p>
-  </div>
-</section>
-
-<!-- ===== Auth Section ===== -->
-<section class="py-12 sm:py-20 bg-gray-50">
-  <div class="container mx-auto px-4 sm:px-6 max-w-md">
-
-    <!-- Card -->
-    <div class="bg-white rounded-3xl shadow-xl p-6 sm:p-8 border border-gray-200 auth-card">
-
-      <!-- ===== USER INFO (when logged in) ===== -->
-      <div id="userInfo" class="hidden text-center">
-        <div class="flex flex-col items-center">
-          <img id="userPhoto" src="" alt="প্রোফাইল ছবি" class="user-avatar w-20 h-20 rounded-full border-4 border-[#1e40af] mb-3" />
-          <h3 id="userName" class="text-xl font-bold text-[#0b2b4a]"></h3>
-          <p id="userEmail" class="text-gray-600 text-sm"></p>
-          <button id="logoutBtn" class="mt-4 bg-red-500 text-white px-6 py-2 rounded-xl font-semibold hover:bg-red-600 transition">
-            <i class="fas fa-sign-out-alt"></i> লগআউট
-          </button>
-          <a href="profile.html" class="mt-3 inline-block bg-[#0b2b4a] text-white px-6 py-2 rounded-xl font-semibold hover:bg-[#1e40af] transition">
-            <i class="fas fa-arrow-right"></i> প্রোফাইল পেজে যান
-          </a>
-        </div>
-      </div>
-
-      <!-- ===== LOGIN / SIGNUP FORM ===== -->
-      <div id="authForm">
-        <!-- Tabs -->
-        <div class="flex bg-gray-100 rounded-2xl p-1.5 shadow-inner mb-6">
-          <button id="signinTab" class="tab-btn active flex-1 py-2 px-4 rounded-xl font-bold text-sm sm:text-base transition">সাইন ইন</button>
-          <button id="signupTab" class="tab-btn flex-1 py-2 px-4 rounded-xl font-bold text-sm sm:text-base transition">সাইন আপ</button>
-        </div>
-
-        <!-- ===== SIGN IN TAB ===== -->
-        <div id="signinContent" class="tab-content active">
-          <h2 class="text-2xl font-bold text-[#0b2b4a] mb-2">সাইন ইন</h2>
-          <p class="text-gray-600 text-sm mb-6">আপনার ইমেইল ও পাসওয়ার্ড দিয়ে লগইন করুন।</p>
-
-          <form id="signinForm">
-            <div class="mb-4">
-              <label class="block text-sm font-medium text-gray-700 mb-1">ইমেইল *</label>
-              <input type="email" id="signinEmail" class="form-input w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#1e40af] transition" placeholder="আপনার ইমেইল" />
-              <div id="signinEmailError" class="error-msg">সঠিক ইমেইল দিন</div>
-            </div>
-            <div class="mb-4">
-              <label class="block text-sm font-medium text-gray-700 mb-1">পাসওয়ার্ড *</label>
-              <input type="password" id="signinPassword" class="form-input w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#1e40af] transition" placeholder="আপনার পাসওয়ার্ড" />
-              <div id="signinPasswordError" class="error-msg">পাসওয়ার্ড দিন</div>
-            </div>
-            <button type="submit" id="signinBtn" class="w-full bg-[#0b2b4a] text-white py-4 rounded-2xl font-bold text-lg hover:bg-[#1e40af] transition shadow-lg flex items-center justify-center gap-3">
-              <i class="fas fa-sign-in-alt"></i> সাইন ইন
-            </button>
-            <div id="signinLoading" class="loading-spinner text-center mt-3">
-              <i class="fas fa-spinner fa-spin text-[#1e40af] text-2xl"></i>
-              <p class="text-sm text-gray-500 mt-1">লগইন হচ্ছে...</p>
-            </div>
-            <div id="signinError" class="error-msg mt-2 text-center"></div>
-            <div id="signinSuccess" class="success-msg mt-2 text-center"></div>
-          </form>
-
-          <!-- Divider -->
-          <div class="divider"><span>অথবা</span></div>
-
-          <!-- Google Login -->
-          <button id="googleLoginBtn" class="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 py-4 rounded-2xl font-semibold text-gray-700 hover:bg-gray-50 transition shadow-sm">
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" class="w-6 h-6" />
-            Google দিয়ে লগইন করুন
-          </button>
-          <div id="googleLoading" class="loading-spinner text-center mt-3">
-            <i class="fas fa-spinner fa-spin text-[#1e40af] text-2xl"></i>
-            <p class="text-sm text-gray-500 mt-1">লগইন হচ্ছে...</p>
-          </div>
-          <div id="googleError" class="error-msg mt-2 text-center"></div>
-          <div id="googleSuccess" class="success-msg mt-2 text-center"></div>
-        </div>
-
-        <!-- ===== SIGN UP TAB ===== -->
-        <div id="signupContent" class="tab-content">
-          <h2 class="text-2xl font-bold text-[#0b2b4a] mb-2">সাইন আপ</h2>
-          <p class="text-gray-600 text-sm mb-6">নিচের তথ্য দিয়ে একটি নতুন অ্যাকাউন্ট তৈরি করুন।</p>
-
-          <form id="signupForm">
-            <!-- Email -->
-            <div class="mb-4">
-              <label class="block text-sm font-medium text-gray-700 mb-1">ইমেইল *</label>
-              <input type="email" id="signupEmail" class="form-input w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#1e40af] transition" placeholder="আপনার ইমেইল" />
-              <div id="signupEmailError" class="error-msg">সঠিক ইমেইল দিন</div>
-            </div>
-
-            <!-- NID -->
-            <div class="mb-4">
-              <label class="block text-sm font-medium text-gray-700 mb-1">জাতীয় পরিচয়পত্র (NID) *</label>
-              <input type="text" id="signupNid" class="form-input w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#1e40af] transition" placeholder="১০ অঙ্কের NID নম্বর" maxlength="10" />
-              <div id="signupNidError" class="error-msg">সঠিক ১০ অঙ্কের NID নম্বর দিন</div>
-            </div>
-
-            <!-- জন্ম তারিখ -->
-            <div class="mb-4">
-              <label class="block text-sm font-medium text-gray-700 mb-1">জন্ম তারিখ *</label>
-              <input type="date" id="signupDob" class="form-input w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#1e40af] transition" />
-              <div id="signupDobError" class="error-msg">আপনার জন্ম তারিখ নির্বাচন করুন</div>
-            </div>
-
-            <!-- মোবাইল নম্বর -->
-            <div class="mb-4">
-              <label class="block text-sm font-medium text-gray-700 mb-1">মোবাইল নম্বর *</label>
-              <input type="tel" id="signupPhone" class="form-input w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#1e40af] transition" placeholder="+880 1712-345678" value="+880" />
-              <div id="signupPhoneError" class="error-msg">সঠিক ফোন নম্বর দিন (যেমন: +8801712345678)</div>
-            </div>
-
-            <!-- পাসওয়ার্ড -->
-            <div class="mb-4">
-              <label class="block text-sm font-medium text-gray-700 mb-1">পাসওয়ার্ড *</label>
-              <input type="password" id="signupPassword" class="form-input w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#1e40af] transition" placeholder="৮+ অক্ষর" />
-              <div id="signupPasswordError" class="error-msg">পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে</div>
-            </div>
-
-            <!-- পাসওয়ার্ড নিশ্চিত -->
-            <div class="mb-4">
-              <label class="block text-sm font-medium text-gray-700 mb-1">পাসওয়ার্ড নিশ্চিত করুন *</label>
-              <input type="password" id="signupConfirm" class="form-input w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#1e40af] transition" placeholder="আবার পাসওয়ার্ড দিন" />
-              <div id="signupConfirmError" class="error-msg">পাসওয়ার্ড মেলেনি</div>
-            </div>
-
-            <button type="submit" id="signupBtn" class="w-full bg-[#0b2b4a] text-white py-4 rounded-2xl font-bold text-lg hover:bg-[#1e40af] transition shadow-lg flex items-center justify-center gap-3">
-              <i class="fas fa-user-plus"></i> সাইন আপ
-            </button>
-            <div id="signupLoading" class="loading-spinner text-center mt-3">
-              <i class="fas fa-spinner fa-spin text-[#1e40af] text-2xl"></i>
-              <p class="text-sm text-gray-500 mt-1">অ্যাকাউন্ট তৈরি হচ্ছে...</p>
-            </div>
-            <div id="signupError" class="error-msg mt-2 text-center"></div>
-            <div id="signupSuccess" class="success-msg mt-2 text-center"></div>
-          </form>
-        </div>
-
-        <!-- ===== TERMS ===== -->
-        <p class="text-xs text-gray-500 text-center mt-6">
-          অ্যাকাউন্ট তৈরি বা লগইন করলে আপনি আমাদের <a href="#" class="text-[#1e40af] font-semibold hover:underline">শর্তাবলী</a> এবং <a href="#" class="text-[#1e40af] font-semibold hover:underline">গোপনীয়তা নীতি</a> মেনে চলছেন।
+    <!-- ===== Hero ===== -->
+    <section class="hero-gradient py-12 sm:py-16 text-white">
+      <div class="container mx-auto px-4 sm:px-6 text-center">
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold">স্বাগতম</h1>
+        <p class="text-base sm:text-xl text-white/80 max-w-2xl mx-auto mt-3">
+          আপনার অ্যাকাউন্টে প্রবেশ করুন অথবা নতুন অ্যাকাউন্ট তৈরি করুন।
         </p>
       </div>
+    </section>
 
-    </div>
-  </div>
-</section>
+    <!-- ===== Auth Section ===== -->
+    <section class="py-12 sm:py-20 bg-gray-50">
+      <div class="container mx-auto px-4 sm:px-6 max-w-md">
 
-<!-- ===== Footer ===== -->
-<footer class="bg-[#0b2b4a] text-white py-10 sm:py-12">
-  <div class="container mx-auto px-4 sm:px-6">
-    <div class="grid sm:grid-cols-3 gap-8 text-center sm:text-left">
-      <div>
-        <div class="text-2xl sm:text-3xl font-bold">ইজি <span class="text-[#60a5fa]">নামজারি</span></div>
-        <p class="text-gray-400 text-sm sm:text-base mt-2"><i class="fas fa-map-marker-alt mr-2"></i> সাভার উপজেলা ভূমি অফিসের পাশে</p>
-        <p class="text-gray-400 text-sm sm:text-base"><i class="fas fa-phone mr-2"></i> ০১৩৫০১৪১৭৬২</p>
-        <p class="text-gray-400 text-sm sm:text-base"><i class="fas fa-envelope mr-2"></i> nopqrshov337@gmail.com</p>
+        <!-- Card -->
+        <div class="bg-white rounded-3xl shadow-xl p-6 sm:p-8 border border-gray-200 auth-card">
+
+          <!-- ===== LOGIN / SIGNUP FORM ===== -->
+          <div id="authForm">
+            <!-- Tabs -->
+            <div class="flex bg-gray-100 rounded-2xl p-1.5 shadow-inner mb-6">
+              <button id="signinTab" class="tab-btn active flex-1 py-2 px-4 rounded-xl font-bold text-sm sm:text-base transition">সাইন ইন</button>
+              <button id="signupTab" class="tab-btn flex-1 py-2 px-4 rounded-xl font-bold text-sm sm:text-base transition">সাইন আপ</button>
+            </div>
+
+            <!-- ===== SIGN IN TAB ===== -->
+            <div id="signinContent" class="tab-content active">
+              <h2 class="text-2xl font-bold text-[#0b2b4a] mb-2">সাইন ইন</h2>
+              <p class="text-gray-600 text-sm mb-6">আপনার ইমেইল ও পাসওয়ার্ড দিয়ে লগইন করুন।</p>
+
+              <form id="signinForm">
+                <div class="mb-4">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">ইমেইল *</label>
+                  <input type="email" id="signinEmail" class="form-input w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#1e40af] transition" placeholder="আপনার ইমেইল" />
+                  <div id="signinEmailError" class="error-msg">সঠিক ইমেইল দিন</div>
+                </div>
+                <div class="mb-4">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">পাসওয়ার্ড *</label>
+                  <input type="password" id="signinPassword" class="form-input w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#1e40af] transition" placeholder="আপনার পাসওয়ার্ড" />
+                  <div id="signinPasswordError" class="error-msg">পাসওয়ার্ড দিন</div>
+                </div>
+                <button type="submit" id="signinBtn" class="w-full bg-[#0b2b4a] text-white py-4 rounded-2xl font-bold text-lg hover:bg-[#1e40af] transition shadow-lg flex items-center justify-center gap-3">
+                  <i class="fas fa-sign-in-alt"></i> সাইন ইন
+                </button>
+                <div id="signinLoading" class="loading-spinner text-center mt-3">
+                  <i class="fas fa-spinner fa-spin text-[#1e40af] text-2xl"></i>
+                  <p class="text-sm text-gray-500 mt-1">লগইন হচ্ছে...</p>
+                </div>
+                <div id="signinError" class="error-msg mt-2 text-center"></div>
+                <div id="signinSuccess" class="success-msg mt-2 text-center"></div>
+              </form>
+
+              <!-- Divider -->
+              <div class="divider"><span>অথবা</span></div>
+
+              <!-- Google Login -->
+              <button id="googleLoginBtn" class="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 py-4 rounded-2xl font-semibold text-gray-700 hover:bg-gray-50 transition shadow-sm">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" class="w-6 h-6" />
+                Google দিয়ে লগইন করুন
+              </button>
+              <div id="googleLoading" class="loading-spinner text-center mt-3">
+                <i class="fas fa-spinner fa-spin text-[#1e40af] text-2xl"></i>
+                <p class="text-sm text-gray-500 mt-1">লগইন হচ্ছে...</p>
+              </div>
+              <div id="googleError" class="error-msg mt-2 text-center"></div>
+              <div id="googleSuccess" class="success-msg mt-2 text-center"></div>
+            </div>
+
+            <!-- ===== SIGN UP TAB ===== -->
+            <div id="signupContent" class="tab-content">
+              <h2 class="text-2xl font-bold text-[#0b2b4a] mb-2">সাইন আপ</h2>
+              <p class="text-gray-600 text-sm mb-6">নিচের তথ্য দিয়ে একটি নতুন অ্যাকাউন্ট তৈরি করুন।</p>
+
+              <form id="signupForm">
+                <!-- Email -->
+                <div class="mb-4">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">ইমেইল *</label>
+                  <input type="email" id="signupEmail" class="form-input w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#1e40af] transition" placeholder="আপনার ইমেইল" />
+                  <div id="signupEmailError" class="error-msg">সঠিক ইমেইল দিন</div>
+                </div>
+
+                <!-- NID -->
+                <div class="mb-4">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">জাতীয় পরিচয়পত্র (NID) *</label>
+                  <input type="text" id="signupNid" class="form-input w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#1e40af] transition" placeholder="১০ অঙ্কের NID নম্বর" maxlength="10" />
+                  <div id="signupNidError" class="error-msg">সঠিক ১০ অঙ্কের NID নম্বর দিন</div>
+                </div>
+
+                <!-- জন্ম তারিখ -->
+                <div class="mb-4">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">জন্ম তারিখ *</label>
+                  <input type="date" id="signupDob" class="form-input w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#1e40af] transition" />
+                  <div id="signupDobError" class="error-msg">আপনার জন্ম তারিখ নির্বাচন করুন</div>
+                </div>
+
+                <!-- মোবাইল নম্বর -->
+                <div class="mb-4">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">মোবাইল নম্বর *</label>
+                  <input type="tel" id="signupPhone" class="form-input w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#1e40af] transition" placeholder="+880 1712-345678" value="+880" />
+                  <div id="signupPhoneError" class="error-msg">সঠিক ফোন নম্বর দিন (যেমন: +8801712345678)</div>
+                </div>
+
+                <!-- পাসওয়ার্ড -->
+                <div class="mb-4">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">পাসওয়ার্ড *</label>
+                  <input type="password" id="signupPassword" class="form-input w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#1e40af] transition" placeholder="৮+ অক্ষর" />
+                  <div id="signupPasswordError" class="error-msg">পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে</div>
+                </div>
+
+                <!-- পাসওয়ার্ড নিশ্চিত -->
+                <div class="mb-4">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">পাসওয়ার্ড নিশ্চিত করুন *</label>
+                  <input type="password" id="signupConfirm" class="form-input w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#1e40af] transition" placeholder="আবার পাসওয়ার্ড দিন" />
+                  <div id="signupConfirmError" class="error-msg">পাসওয়ার্ড মেলেনি</div>
+                </div>
+
+                <button type="submit" id="signupBtn" class="w-full bg-[#0b2b4a] text-white py-4 rounded-2xl font-bold text-lg hover:bg-[#1e40af] transition shadow-lg flex items-center justify-center gap-3">
+                  <i class="fas fa-user-plus"></i> সাইন আপ
+                </button>
+                <div id="signupLoading" class="loading-spinner text-center mt-3">
+                  <i class="fas fa-spinner fa-spin text-[#1e40af] text-2xl"></i>
+                  <p class="text-sm text-gray-500 mt-1">অ্যাকাউন্ট তৈরি হচ্ছে...</p>
+                </div>
+                <div id="signupError" class="error-msg mt-2 text-center"></div>
+                <div id="signupSuccess" class="success-msg mt-2 text-center"></div>
+              </form>
+            </div>
+
+            <!-- ===== TERMS ===== -->
+            <p class="text-xs text-gray-500 text-center mt-6">
+              অ্যাকাউন্ট তৈরি বা লগইন করলে আপনি আমাদের <a href="#" class="text-[#1e40af] font-semibold hover:underline">শর্তাবলী</a> এবং <a href="#" class="text-[#1e40af] font-semibold hover:underline">গোপনীয়তা নীতি</a> মেনে চলছেন।
+            </p>
+          </div>
+
+        </div>
       </div>
-      <div>
-        <h4 class="text-lg sm:text-xl font-bold mb-3 sm:mb-4">দ্রুত লিংক</h4>
-        <ul class="space-y-2 text-sm sm:text-base">
-          <li><a href="index.html" class="text-gray-400 hover:text-white transition">হোম</a></li>
-          <li><a href="profile.html" class="text-gray-400 hover:text-white transition">প্রোফাইল</a></li>
-          <li><a href="contact.html" class="text-gray-400 hover:text-white transition">যোগাযোগ</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4 class="text-lg sm:text-xl font-bold mb-3 sm:mb-4">সেবাসমূহ</h4>
-        <ul class="space-y-2 text-sm sm:text-base">
-          <li><a href="#" class="text-gray-400 hover:text-white transition">ভূমি মিউটেশন</a></li>
-          <li><a href="#" class="text-gray-400 hover:text-white transition">নামজারি আবেদন</a></li>
-          <li><a href="#" class="text-gray-400 hover:text-white transition">DCR প্রাপ্তি</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400 text-sm sm:text-base">
-      © 2026 Easy Namjari | Managed by: <a href="https://codecurebd.vercel.app" target="_blank" class="text-[#60a5fa] hover:underline font-semibold">CodeCureBD</a> | All Rights Reserved.
-    </div>
-  </div>
-</footer>
+    </section>
 
-<!-- ===== Floating Contact ===== -->
-<div class="fixed bottom-6 sm:bottom-8 right-4 sm:right-8 flex flex-col gap-3 sm:gap-4 z-50">
-  <a href="tel:01350141762" class="floating-btn bg-[#0b2b4a] text-white p-3 sm:p-4 rounded-full shadow-2xl hover:bg-[#1e40af] transition flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16">
-    <i class="fas fa-phone text-2xl sm:text-3xl"></i>
-  </a>
-  <a href="https://wa.me/8801350141762" class="floating-btn bg-green-500 text-white p-3 sm:p-4 rounded-full shadow-2xl hover:bg-green-600 transition flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16">
-    <i class="fab fa-whatsapp text-2xl sm:text-3xl"></i>
-  </a>
-</div>
+  </div> <!-- end page-content -->
 
-<!-- ===================================================== -->
-<!-- ===== FIREBASE AUTH SCRIPT ===== -->
-<!-- ===================================================== -->
-<script>
-  // Firebase Config
-  const firebaseConfig = {
-    apiKey: "AIzaSyBOpiCSVD8O-uT4CR4_-e9kGpZ1uVHFG54",
-    authDomain: "easy-namjari.firebaseapp.com",
-    projectId: "easy-namjari",
-    storageBucket: "easy-namjari.firebasestorage.app",
-    messagingSenderId: "686038387625",
-    appId: "1:686038387625:web:2a8eebba1b771844fcd2b8"
-  };
+  <!-- ===================================================== -->
+  <!-- ===== SCRIPTS ===== -->
+  <!-- ===================================================== -->
+  <script type="module">
+    import { loadAllComponents, navigateTo } from './components.js';
+    import { showToast } from './main.js';
 
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyBOpiCSVD8O-uT4CR4_-e9kGpZ1uVHFG54",
+      authDomain: "easy-namjari.firebaseapp.com",
+      projectId: "easy-namjari",
+      storageBucket: "easy-namjari.firebasestorage.app",
+      messagingSenderId: "686038387625",
+      appId: "1:686038387625:web:2a8eebba1b771844fcd2b8"
+    };
 
-  // ===== DOM REFS =====
-  // Sign In
-  const signinForm = document.getElementById('signinForm');
-  const signinEmail = document.getElementById('signinEmail');
-  const signinPassword = document.getElementById('signinPassword');
-  const signinBtn = document.getElementById('signinBtn');
-  const signinLoading = document.getElementById('signinLoading');
-  const signinError = document.getElementById('signinError');
-  const signinSuccess = document.getElementById('signinSuccess');
-  const signinEmailError = document.getElementById('signinEmailError');
-  const signinPasswordError = document.getElementById('signinPasswordError');
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-  // Sign Up
-  const signupForm = document.getElementById('signupForm');
-  const signupEmail = document.getElementById('signupEmail');
-  const signupNid = document.getElementById('signupNid');
-  const signupDob = document.getElementById('signupDob');
-  const signupPhone = document.getElementById('signupPhone');
-  const signupPassword = document.getElementById('signupPassword');
-  const signupConfirm = document.getElementById('signupConfirm');
-  const signupBtn = document.getElementById('signupBtn');
-  const signupLoading = document.getElementById('signupLoading');
-  const signupError = document.getElementById('signupError');
-  const signupSuccess = document.getElementById('signupSuccess');
-  const signupEmailError = document.getElementById('signupEmailError');
-  const signupNidError = document.getElementById('signupNidError');
-  const signupDobError = document.getElementById('signupDobError');
-  const signupPhoneError = document.getElementById('signupPhoneError');
-  const signupPasswordError = document.getElementById('signupPasswordError');
-  const signupConfirmError = document.getElementById('signupConfirmError');
+    // Load components (navbar, footer, floating buttons)
+    loadAllComponents('auth');
 
-  // Google
-  const googleLoginBtn = document.getElementById('googleLoginBtn');
-  const googleLoading = document.getElementById('googleLoading');
-  const googleError = document.getElementById('googleError');
-  const googleSuccess = document.getElementById('googleSuccess');
+    // DOM refs - Sign In
+    const signinForm = document.getElementById('signinForm');
+    const signinEmail = document.getElementById('signinEmail');
+    const signinPassword = document.getElementById('signinPassword');
+    const signinBtn = document.getElementById('signinBtn');
+    const signinLoading = document.getElementById('signinLoading');
+    const signinError = document.getElementById('signinError');
+    const signinSuccess = document.getElementById('signinSuccess');
+    const signinEmailError = document.getElementById('signinEmailError');
+    const signinPasswordError = document.getElementById('signinPasswordError');
 
-  // User Info
-  const userInfo = document.getElementById('userInfo');
-  const authForm = document.getElementById('authForm');
-  const userName = document.getElementById('userName');
-  const userEmail = document.getElementById('userEmail');
-  const userPhoto = document.getElementById('userPhoto');
-  const logoutBtn = document.getElementById('logoutBtn');
+    // DOM refs - Sign Up
+    const signupForm = document.getElementById('signupForm');
+    const signupEmail = document.getElementById('signupEmail');
+    const signupNid = document.getElementById('signupNid');
+    const signupDob = document.getElementById('signupDob');
+    const signupPhone = document.getElementById('signupPhone');
+    const signupPassword = document.getElementById('signupPassword');
+    const signupConfirm = document.getElementById('signupConfirm');
+    const signupBtn = document.getElementById('signupBtn');
+    const signupLoading = document.getElementById('signupLoading');
+    const signupError = document.getElementById('signupError');
+    const signupSuccess = document.getElementById('signupSuccess');
+    const signupEmailError = document.getElementById('signupEmailError');
+    const signupNidError = document.getElementById('signupNidError');
+    const signupDobError = document.getElementById('signupDobError');
+    const signupPhoneError = document.getElementById('signupPhoneError');
+    const signupPasswordError = document.getElementById('signupPasswordError');
+    const signupConfirmError = document.getElementById('signupConfirmError');
 
-  // Tabs
-  const signinTab = document.getElementById('signinTab');
-  const signupTab = document.getElementById('signupTab');
-  const signinContent = document.getElementById('signinContent');
-  const signupContent = document.getElementById('signupContent');
+    // DOM refs - Google
+    const googleLoginBtn = document.getElementById('googleLoginBtn');
+    const googleLoading = document.getElementById('googleLoading');
+    const googleError = document.getElementById('googleError');
+    const googleSuccess = document.getElementById('googleSuccess');
 
-  // ===== HELPER FUNCTIONS =====
-  function showError(el, msg) {
-    el.textContent = msg;
-    el.classList.add('show');
-    setTimeout(() => el.classList.remove('show'), 5000);
-  }
-  function showSuccess(el, msg) {
-    el.textContent = msg;
-    el.classList.add('show');
-    setTimeout(() => el.classList.remove('show'), 3000);
-  }
-  function setLoading(el, state) {
-    if (state) {
+    // DOM refs - Tabs
+    const signinTab = document.getElementById('signinTab');
+    const signupTab = document.getElementById('signupTab');
+    const signinContent = document.getElementById('signinContent');
+    const signupContent = document.getElementById('signupContent');
+
+    // ===== HELPER FUNCTIONS =====
+    function showError(el, msg) {
+      el.textContent = msg;
       el.classList.add('show');
-    } else {
-      el.classList.remove('show');
+      setTimeout(() => el.classList.remove('show'), 5000);
     }
-  }
-
-  // ===== TAB SWITCHING =====
-  signinTab.addEventListener('click', () => {
-    signinTab.classList.add('active');
-    signupTab.classList.remove('active');
-    signinContent.classList.add('active');
-    signupContent.classList.remove('active');
-    signinError.classList.remove('show');
-    signinSuccess.classList.remove('show');
-  });
-  signupTab.addEventListener('click', () => {
-    signupTab.classList.add('active');
-    signinTab.classList.remove('active');
-    signupContent.classList.add('active');
-    signinContent.classList.remove('active');
-    signupError.classList.remove('show');
-    signupSuccess.classList.remove('show');
-  });
-
-  // ===== UPDATE UI =====
-  function updateUI(user) {
-    if (user) {
-      userInfo.classList.remove('hidden');
-      authForm.style.display = 'none';
-      userName.textContent = user.displayName || user.email || 'ব্যবহারকারী';
-      userEmail.textContent = user.email || '';
-      userPhoto.src = user.photoURL || 'https://ui-avatars.com/api/?name=' + (user.displayName || 'User') + '&background=1e40af&color=fff&size=80';
-    } else {
-      userInfo.classList.add('hidden');
-      authForm.style.display = 'block';
+    function showSuccess(el, msg) {
+      el.textContent = msg;
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 3000);
     }
-  }
-
-  auth.onAuthStateChanged(user => {
-    updateUI(user);
-  });
-
-  // ===== SIGN IN (Email + Password) =====
-  signinForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = signinEmail.value.trim();
-    const password = signinPassword.value;
-
-    let valid = true;
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      showError(signinEmailError, 'সঠিক ইমেইল দিন');
-      valid = false;
-    } else {
-      signinEmailError.classList.remove('show');
-    }
-    if (!password || password.length < 6) {
-      showError(signinPasswordError, 'পাসওয়ার্ড দিন');
-      valid = false;
-    } else {
-      signinPasswordError.classList.remove('show');
-    }
-    if (!valid) return;
-
-    setLoading(signinLoading, true);
-    signinBtn.disabled = true;
-    signinBtn.style.opacity = '0.6';
-
-    try {
-      await auth.signInWithEmailAndPassword(email, password);
-      showSuccess(signinSuccess, 'লগইন সফল!');
-      setLoading(signinLoading, false);
-      signinBtn.disabled = false;
-      signinBtn.style.opacity = '1';
-      setTimeout(() => window.location.href = 'profile.html', 1000);
-    } catch (error) {
-      setLoading(signinLoading, false);
-      signinBtn.disabled = false;
-      signinBtn.style.opacity = '1';
-      console.error('Sign in error:', error);
-      let msg = 'লগইন ব্যর্থ হয়েছে। ইমেইল বা পাসওয়ার্ড ভুল।';
-      if (error.code === 'auth/user-not-found') {
-        msg = 'এই ইমেইলটি নিবন্ধিত নেই। দয়া করে সাইন আপ করুন।';
-      } else if (error.code === 'auth/wrong-password') {
-        msg = 'পাসওয়ার্ড ভুল।';
-      } else if (error.code === 'auth/too-many-requests') {
-        msg = 'অনেক বেশি চেষ্টা করেছেন। কিছুক্ষণ পর আবার চেষ্টা করুন।';
+    function setLoading(el, state) {
+      if (state) {
+        el.classList.add('show');
+      } else {
+        el.classList.remove('show');
       }
-      showError(signinError, msg);
-    }
-  });
-
-  // ===== SIGN UP =====
-  signupForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = signupEmail.value.trim();
-    const nid = signupNid.value.trim();
-    const dob = signupDob.value;
-    const phone = signupPhone.value.trim();
-    const password = signupPassword.value;
-    const confirm = signupConfirm.value;
-
-    let valid = true;
-
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      showError(signupEmailError, 'সঠিক ইমেইল দিন');
-      valid = false;
-    } else {
-      signupEmailError.classList.remove('show');
     }
 
-    if (!nid || !/^\d{10}$/.test(nid)) {
-      showError(signupNidError, 'সঠিক ১০ অঙ্কের NID নম্বর দিন');
-      valid = false;
-    } else {
-      signupNidError.classList.remove('show');
-    }
-    if (!dob) {
-      showError(signupDobError, 'আপনার জন্ম তারিখ নির্বাচন করুন');
-      valid = false;
-    } else {
-      signupDobError.classList.remove('show');
-    }
-    if (!phone || !phone.startsWith('+') || phone.replace(/[^0-9]/g, '').length < 10) {
-      showError(signupPhoneError, 'সঠিক ফোন নম্বর দিন (যেমন: +8801712345678)');
-      valid = false;
-    } else {
-      signupPhoneError.classList.remove('show');
-    }
-    if (!password || password.length < 8) {
-      showError(signupPasswordError, 'পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে');
-      valid = false;
-    } else {
-      signupPasswordError.classList.remove('show');
-    }
-    if (password !== confirm) {
-      showError(signupConfirmError, 'পাসওয়ার্ড মেলেনি');
-      valid = false;
-    } else {
-      signupConfirmError.classList.remove('show');
-    }
-    if (!valid) return;
+    // ===== TAB SWITCHING =====
+    signinTab.addEventListener('click', () => {
+      signinTab.classList.add('active');
+      signupTab.classList.remove('active');
+      signinContent.classList.add('active');
+      signupContent.classList.remove('active');
+      signinError.classList.remove('show');
+      signinSuccess.classList.remove('show');
+    });
+    signupTab.addEventListener('click', () => {
+      signupTab.classList.add('active');
+      signinTab.classList.remove('active');
+      signupContent.classList.add('active');
+      signinContent.classList.remove('active');
+      signupError.classList.remove('show');
+      signupSuccess.classList.remove('show');
+    });
 
-    setLoading(signupLoading, true);
-    signupBtn.disabled = true;
-    signupBtn.style.opacity = '0.6';
+    // ===== SIGN IN (Email + Password) =====
+    signinForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = signinEmail.value.trim();
+      const password = signinPassword.value;
 
-    try {
-      const userCred = await auth.createUserWithEmailAndPassword(email, password);
-      const user = userCred.user;
+      let valid = true;
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showError(signinEmailError, 'সঠিক ইমেইল দিন');
+        valid = false;
+      } else {
+        signinEmailError.classList.remove('show');
+      }
+      if (!password || password.length < 6) {
+        showError(signinPasswordError, 'পাসওয়ার্ড দিন');
+        valid = false;
+      } else {
+        signinPasswordError.classList.remove('show');
+      }
+      if (!valid) return;
 
-      // Update display name with NID
-      await user.updateProfile({ displayName: 'User_' + nid });
+      setLoading(signinLoading, true);
+      signinBtn.disabled = true;
+      signinBtn.style.opacity = '0.6';
 
-      // Save user data to Firestore
-      await db.collection('users').doc(user.uid).set({
-        email: email,
-        nid: nid,
-        dob: dob,
-        phone: phone,
-        userType: 'user',  // Default user type
-        createdAt: new Date().toISOString()
-      });
-
-      showSuccess(signupSuccess, 'অ্যাকাউন্ট তৈরি সফল!');
-      setLoading(signupLoading, false);
-      signupBtn.disabled = false;
-      signupBtn.style.opacity = '1';
-      setTimeout(() => window.location.href = 'profile.html', 1000);
-    } catch (error) {
-      setLoading(signupLoading, false);
-      signupBtn.disabled = false;
-      signupBtn.style.opacity = '1';
-      console.error('Sign up error:', error);
-      let msg = 'অ্যাকাউন্ট তৈরি ব্যর্থ হয়েছে। আবার চেষ্টা করুন।';
-      if (error.code === 'auth/email-already-in-use') {
-        // If email already registered, try to sign in and then create Firestore doc if missing
-        try {
-          const userCred = await auth.signInWithEmailAndPassword(email, password);
-          const user = userCred.user;
-          // Check if Firestore doc exists, if not create it
-          const docRef = db.collection('users').doc(user.uid);
-          const docSnap = await docRef.get();
-          if (!docSnap.exists) {
-            await docRef.set({
-              email: email,
-              nid: nid,
-              dob: dob,
-              phone: phone,
-              userType: 'user',
-              createdAt: new Date().toISOString()
-            });
-          }
-          showSuccess(signupSuccess, 'আপনার অ্যাকাউন্ট ইতিমধ্যে আছে, লগইন করা হচ্ছে!');
-          setLoading(signupLoading, false);
-          signupBtn.disabled = false;
-          signupBtn.style.opacity = '1';
-          setTimeout(() => window.location.href = 'profile.html', 1000);
-        } catch (signinError) {
-          setLoading(signupLoading, false);
-          signupBtn.disabled = false;
-          signupBtn.style.opacity = '1';
-          showError(signupError, 'অ্যাকাউন্ট ইতিমধ্যে আছে কিন্তু লগইন ব্যর্থ। দয়া করে সাইন ইন করুন।');
+      try {
+        await auth.signInWithEmailAndPassword(email, password);
+        showSuccess(signinSuccess, 'লগইন সফল!');
+        setLoading(signinLoading, false);
+        signinBtn.disabled = false;
+        signinBtn.style.opacity = '1';
+        setTimeout(() => navigateTo('profile'), 1000);
+      } catch (error) {
+        setLoading(signinLoading, false);
+        signinBtn.disabled = false;
+        signinBtn.style.opacity = '1';
+        console.error('Sign in error:', error);
+        let msg = 'লগইন ব্যর্থ হয়েছে। ইমেইল বা পাসওয়ার্ড ভুল।';
+        if (error.code === 'auth/user-not-found') {
+          msg = 'এই ইমেইলটি নিবন্ধিত নেই। দয়া করে সাইন আপ করুন।';
+        } else if (error.code === 'auth/wrong-password') {
+          msg = 'পাসওয়ার্ড ভুল।';
+        } else if (error.code === 'auth/too-many-requests') {
+          msg = 'অনেক বেশি চেষ্টা করেছেন। কিছুক্ষণ পর আবার চেষ্টা করুন।';
         }
-        return; // Stop further execution
-      } else if (error.code === 'auth/weak-password') {
-        msg = 'পাসওয়ার্ড দুর্বল। আরও শক্তিশালী পাসওয়ার্ড দিন।';
-      } else if (error.code === 'auth/invalid-email') {
-        msg = 'ইমেইলটি সঠিক নয়।';
-      } else if (error.code === 'auth/network-request-failed') {
-        msg = 'নেটওয়ার্ক সমস্যা। ইন্টারনেট সংযোগ চেক করুন।';
-      } else if (error.code === 'auth/operation-not-allowed') {
-        msg = 'Email/Password সক্রিয় নেই। Firebase কনসোলে চেক করুন।';
+        showError(signinError, msg);
       }
-      showError(signupError, msg);
-    }
-  });
+    });
 
-  // ===== GOOGLE LOGIN =====
-  googleLoginBtn.addEventListener('click', async () => {
-    setLoading(googleLoading, true);
-    googleLoginBtn.disabled = true;
-    googleLoginBtn.style.opacity = '0.6';
-    try {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      const result = await auth.signInWithPopup(provider);
-      const user = result.user;
+    // ===== SIGN UP =====
+    signupForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = signupEmail.value.trim();
+      const nid = signupNid.value.trim();
+      const dob = signupDob.value;
+      const phone = signupPhone.value.trim();
+      const password = signupPassword.value;
+      const confirm = signupConfirm.value;
 
-      // Check if user exists in Firestore, if not create with userType: 'user'
-      const docRef = db.collection('users').doc(user.uid);
-      const docSnap = await docRef.get();
-      if (!docSnap.exists) {
-        await docRef.set({
-          email: user.email || '',
-          name: user.displayName || '',
-          photoURL: user.photoURL || '',
-          userType: 'user',  // Default user type for Google sign-in
+      let valid = true;
+
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showError(signupEmailError, 'সঠিক ইমেইল দিন');
+        valid = false;
+      } else {
+        signupEmailError.classList.remove('show');
+      }
+
+      if (!nid || !/^\d{10}$/.test(nid)) {
+        showError(signupNidError, 'সঠিক ১০ অঙ্কের NID নম্বর দিন');
+        valid = false;
+      } else {
+        signupNidError.classList.remove('show');
+      }
+      if (!dob) {
+        showError(signupDobError, 'আপনার জন্ম তারিখ নির্বাচন করুন');
+        valid = false;
+      } else {
+        signupDobError.classList.remove('show');
+      }
+      if (!phone || !phone.startsWith('+') || phone.replace(/[^0-9]/g, '').length < 10) {
+        showError(signupPhoneError, 'সঠিক ফোন নম্বর দিন (যেমন: +8801712345678)');
+        valid = false;
+      } else {
+        signupPhoneError.classList.remove('show');
+      }
+      if (!password || password.length < 8) {
+        showError(signupPasswordError, 'পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে');
+        valid = false;
+      } else {
+        signupPasswordError.classList.remove('show');
+      }
+      if (password !== confirm) {
+        showError(signupConfirmError, 'পাসওয়ার্ড মেলেনি');
+        valid = false;
+      } else {
+        signupConfirmError.classList.remove('show');
+      }
+      if (!valid) return;
+
+      setLoading(signupLoading, true);
+      signupBtn.disabled = true;
+      signupBtn.style.opacity = '0.6';
+
+      try {
+        const userCred = await auth.createUserWithEmailAndPassword(email, password);
+        const user = userCred.user;
+        await user.updateProfile({ displayName: 'User_' + nid });
+
+        await db.collection('users').doc(user.uid).set({
+          email: email,
+          nid: nid,
+          dob: dob,
+          phone: phone,
+          userType: 'user',
           createdAt: new Date().toISOString()
         });
-      }
 
-      showSuccess(googleSuccess, 'Google লগইন সফল!');
-      setLoading(googleLoading, false);
-      googleLoginBtn.disabled = false;
-      googleLoginBtn.style.opacity = '1';
-      setTimeout(() => window.location.href = 'profile.html', 1000);
-    } catch (error) {
-      setLoading(googleLoading, false);
-      googleLoginBtn.disabled = false;
-      googleLoginBtn.style.opacity = '1';
-      console.error('Google login error:', error);
-      let msg = 'Google লগইন ব্যর্থ হয়েছে।';
-      if (error.code === 'auth/popup-closed-by-user') {
-        msg = 'আপনি পপআপ বন্ধ করে দিয়েছেন। আবার চেষ্টা করুন।';
-      } else if (error.code === 'auth/popup-blocked') {
-        msg = 'পপআপ ব্লক করা হয়েছে। ব্রাউজার সেটিংস চেক করুন।';
+        showSuccess(signupSuccess, 'অ্যাকাউন্ট তৈরি সফল!');
+        setLoading(signupLoading, false);
+        signupBtn.disabled = false;
+        signupBtn.style.opacity = '1';
+        setTimeout(() => navigateTo('profile'), 1000);
+      } catch (error) {
+        setLoading(signupLoading, false);
+        signupBtn.disabled = false;
+        signupBtn.style.opacity = '1';
+        console.error('Sign up error:', error);
+        let msg = 'অ্যাকাউন্ট তৈরি ব্যর্থ হয়েছে। আবার চেষ্টা করুন।';
+        if (error.code === 'auth/email-already-in-use') {
+          msg = 'এই ইমেইলটি ইতিমধ্যে নিবন্ধিত। দয়া করে সাইন ইন করুন।';
+        } else if (error.code === 'auth/weak-password') {
+          msg = 'পাসওয়ার্ড দুর্বল। আরও শক্তিশালী পাসওয়ার্ড দিন।';
+        } else if (error.code === 'auth/invalid-email') {
+          msg = 'ইমেইলটি সঠিক নয়।';
+        } else if (error.code === 'auth/network-request-failed') {
+          msg = 'নেটওয়ার্ক সমস্যা। ইন্টারনেট সংযোগ চেক করুন।';
+        } else if (error.code === 'auth/operation-not-allowed') {
+          msg = 'Email/Password সক্রিয় নেই। Firebase কনসোলে চেক করুন।';
+        }
+        showError(signupError, msg);
       }
-      showError(googleError, msg);
-    }
-  });
+    });
 
-  // ===== LOGOUT =====
-  logoutBtn.addEventListener('click', async () => {
-    try {
-      await auth.signOut();
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
-  });
-</script>
+    // ===== GOOGLE LOGIN =====
+    googleLoginBtn.addEventListener('click', async () => {
+      setLoading(googleLoading, true);
+      googleLoginBtn.disabled = true;
+      googleLoginBtn.style.opacity = '0.6';
+      try {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        const result = await auth.signInWithPopup(provider);
+        const user = result.user;
+
+        const docRef = db.collection('users').doc(user.uid);
+        const docSnap = await docRef.get();
+        if (!docSnap.exists) {
+          await docRef.set({
+            email: user.email || '',
+            name: user.displayName || '',
+            photoURL: user.photoURL || '',
+            userType: 'user',
+            createdAt: new Date().toISOString()
+          });
+        }
+
+        showSuccess(googleSuccess, 'Google লগইন সফল!');
+        setLoading(googleLoading, false);
+        googleLoginBtn.disabled = false;
+        googleLoginBtn.style.opacity = '1';
+        setTimeout(() => navigateTo('profile'), 1000);
+      } catch (error) {
+        setLoading(googleLoading, false);
+        googleLoginBtn.disabled = false;
+        googleLoginBtn.style.opacity = '1';
+        console.error('Google login error:', error);
+        let msg = 'Google লগইন ব্যর্থ হয়েছে।';
+        if (error.code === 'auth/popup-closed-by-user') {
+          msg = 'আপনি পপআপ বন্ধ করে দিয়েছেন। আবার চেষ্টা করুন।';
+        } else if (error.code === 'auth/popup-blocked') {
+          msg = 'পপআপ ব্লক করা হয়েছে। ব্রাউজার সেটিংস চেক করুন।';
+        }
+        showError(googleError, msg);
+      }
+    });
+
+    // SPA routing: handle data-page links
+    document.addEventListener('click', (e) => {
+      const link = e.target.closest('a[data-page]');
+      if (link) {
+        e.preventDefault();
+        const page = link.getAttribute('data-page');
+        navigateTo(page);
+      }
+    });
+  </script>
 
 </body>
 </html>

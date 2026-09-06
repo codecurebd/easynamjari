@@ -1,10 +1,15 @@
 // main.js
 // ============================================
 // এই ফাইলটি সাইটের সব পেজে ব্যবহারযোগ্য সাধারণ ফাংশন, 
-// ইউটিলিটি, ভ্যালিডেশন, নোটিফিকেশন ইত্যাদি ধারণ করে।
+// ইউটিলিটি, ভ্যালিডেশন, নোটিফিকেশন, রাউটিং ইত্যাদি ধারণ করে।
 // ব্যবহার: প্রতিটি HTML পেজে <script type="module"> এর ভেতর 
 // import { ... } from './main.js';
 // ============================================
+
+import { loadPage, getCurrentPage, navigateTo } from './components.js';
+
+// Re-export for convenience
+export { navigateTo };
 
 /**
  * ===== ইউটিলিটি ফাংশন =====
@@ -13,7 +18,6 @@
 // মোবাইল নম্বর ভ্যালিডেশন (বাংলাদেশ)
 export function isValidPhone(phone) {
   const cleaned = phone.replace(/[^0-9]/g, '');
-  // ১১ ডিজিট, ০১ দিয়ে শুরু
   return /^01[3-9]\d{8}$/.test(cleaned);
 }
 
@@ -56,7 +60,7 @@ export function isEmpty(str) {
   return !str || str.trim() === '';
 }
 
-// র‍্যান্ডম আইডি জেনারেটর (শুধু ক্লায়েন্ট সাইডের জন্য)
+// র‍্যান্ডম আইডি জেনারেটর
 export function generateId() {
   return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
 }
@@ -68,7 +72,6 @@ export function generateId() {
 
 // টোস্ট নোটিফিকেশন দেখানো
 export function showToast(message, type = 'success', duration = 4000) {
-  // আগের টোস্ট সরান
   const existing = document.querySelector('.custom-toast');
   if (existing) existing.remove();
 
@@ -94,13 +97,11 @@ export function showToast(message, type = 'success', duration = 4000) {
   `;
   document.body.appendChild(toast);
 
-  // অ্যানিমেশন শো
   requestAnimationFrame(() => {
     toast.classList.remove('opacity-0', 'translate-y-[-20px]');
     toast.classList.add('opacity-100', 'translate-y-0');
   });
 
-  // অটো হাইড
   setTimeout(() => {
     toast.classList.remove('opacity-100', 'translate-y-0');
     toast.classList.add('opacity-0', 'translate-y-[-20px]');
@@ -108,12 +109,10 @@ export function showToast(message, type = 'success', duration = 4000) {
   }, duration);
 }
 
-// লোডিং স্পিনার দেখানো/লুকানো
+// লোডিং স্পিনার
 export function showLoading(containerId) {
   const container = document.getElementById(containerId);
   if (!container) return;
-  
-  // আগের স্পিনার সরান
   const existing = container.querySelector('.custom-spinner');
   if (existing) existing.remove();
 
@@ -133,9 +132,9 @@ export function hideLoading(containerId) {
   if (spinner) spinner.remove();
 }
 
-// পেজ রিডাইরেক্ট
-export function redirectTo(url) {
-  window.location.href = url;
+// পেজ রিডাইরেক্ট (এখন SPA সাপোর্ট)
+export function redirectTo(page) {
+  navigateTo(page);
 }
 
 // স্ক্রল টু টপ
@@ -148,7 +147,6 @@ export function scrollToTop() {
  * ===== ফর্ম ভ্যালিডেশন হেলপার =====
  */
 
-// ফর্ম ফিল্ড এরর দেখানো
 export function showFieldError(inputId, errorId) {
   const input = document.getElementById(inputId);
   const error = document.getElementById(errorId);
@@ -162,7 +160,6 @@ export function showFieldError(inputId, errorId) {
   }
 }
 
-// ফর্ম ফিল্ড এরর হাইড করা
 export function hideFieldError(inputId, errorId) {
   const input = document.getElementById(inputId);
   const error = document.getElementById(errorId);
@@ -176,12 +173,10 @@ export function hideFieldError(inputId, errorId) {
   }
 }
 
-// সব ফর্ম ফিল্ড ক্লিয়ার
 export function clearForm(formId) {
   const form = document.getElementById(formId);
   if (!form) return;
   form.reset();
-  // সব এরর মুছে ফেলা
   form.querySelectorAll('.error-msg').forEach(el => {
     el.classList.add('hidden');
     el.classList.remove('show');
@@ -195,12 +190,8 @@ export function clearForm(formId) {
 
 /**
  * ===== ডেটাবেস / API ফাংশন (Firestore) =====
- * 
- * নিচের ফাংশনগুলো Firestore-এ ডেটা পাঠানোর জন্য।
- * এগুলো ব্যবহার করতে হলে firebase-config.js ইম্পোর্ট করতে হবে।
  */
 
-// কনট্যাক্ট ফর্ম ডেটা Firestore-এ সেভ করা
 export async function saveContactMessage(db, addDoc, collection, data) {
   try {
     const docRef = await addDoc(collection(db, 'contacts'), {
@@ -215,7 +206,6 @@ export async function saveContactMessage(db, addDoc, collection, data) {
   }
 }
 
-// আবেদন ডেটা Firestore-এ সেভ করা
 export async function saveApplication(db, addDoc, collection, data) {
   try {
     const docRef = await addDoc(collection(db, 'applications'), {
@@ -230,7 +220,6 @@ export async function saveApplication(db, addDoc, collection, data) {
   }
 }
 
-// সব আবেদন পাওয়া (অ্যাডমিন প্যানেলের জন্য)
 export async function getApplications(db, getDocs, collection) {
   try {
     const querySnapshot = await getDocs(collection(db, 'applications'));
@@ -238,7 +227,6 @@ export async function getApplications(db, getDocs, collection) {
     querySnapshot.forEach((doc) => {
       applications.push({ id: doc.id, ...doc.data() });
     });
-    // তারিখ অনুযায়ী সাজানো (নতুন প্রথমে)
     applications.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     return { success: true, data: applications };
   } catch (error) {
@@ -252,7 +240,6 @@ export async function getApplications(db, getDocs, collection) {
  * ===== অথেনটিকেশন ফাংশন =====
  */
 
-// ইউজার অ্যাডমিন কিনা চেক করা (Custom Claims)
 export async function isUserAdmin(user) {
   if (!user) return false;
   try {
@@ -264,7 +251,6 @@ export async function isUserAdmin(user) {
   }
 }
 
-// লগইন চেক – লগইন না থাকলে রিডাইরেক্ট
 export function requireAuth(auth, onAuthStateChanged, redirectUrl = 'auth.html') {
   return new Promise((resolve) => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -278,7 +264,6 @@ export function requireAuth(auth, onAuthStateChanged, redirectUrl = 'auth.html')
   });
 }
 
-// অ্যাডমিন চেক – অ্যাডমিন না হলে রিডাইরেক্ট
 export async function requireAdmin(auth, onAuthStateChanged, user) {
   if (!user) {
     window.location.href = 'auth.html';
@@ -286,7 +271,7 @@ export async function requireAdmin(auth, onAuthStateChanged, user) {
   }
   const isAdmin = await isUserAdmin(user);
   if (!isAdmin) {
-    window.location.href = 'index.html';
+    window.location.href = 'profile.html';
     return false;
   }
   return true;
@@ -294,10 +279,9 @@ export async function requireAdmin(auth, onAuthStateChanged, user) {
 
 
 /**
- * ===== কনট্যাক্ট ফর্ম হ্যান্ডলার (সাধারণ ব্যবহারের জন্য) =====
+ * ===== কনট্যাক্ট ফর্ম হ্যান্ডলার =====
  */
 
-// কনট্যাক্ট ফর্ম সাবমিট হ্যান্ডলার
 export function setupContactForm(
   formId,
   nameId,
@@ -322,7 +306,6 @@ export function setupContactForm(
     const message = document.getElementById(messageId).value.trim();
     const method = document.querySelector(`input[name="${methodName}"]:checked`)?.value || 'whatsapp';
 
-    // ভ্যালিডেশন
     let valid = true;
     if (!isValidName(name)) {
       showFieldError(nameId, nameId + 'Error');
@@ -347,7 +330,6 @@ export function setupContactForm(
 
     if (!valid) return;
 
-    // ডেটা তৈরি
     const data = {
       name,
       phone: formatPhone(phone),
@@ -356,13 +338,11 @@ export function setupContactForm(
       preferredMethod: method
     };
 
-    // লোডিং দেখান
     const submitBtn = form.querySelector('button[type="submit"]');
     const originalText = submitBtn.innerHTML;
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> পাঠানো হচ্ছে...';
     submitBtn.disabled = true;
 
-    // Firestore-এ সেভ
     const result = await saveContactMessage(db, addDoc, collection, data);
 
     submitBtn.innerHTML = originalText;
@@ -381,7 +361,6 @@ export function setupContactForm(
     }
   });
 
-  // Real-time validation on blur
   document.getElementById(nameId)?.addEventListener('blur', function() {
     if (isValidName(this.value)) hideFieldError(nameId, nameId + 'Error');
   });
@@ -392,10 +371,34 @@ export function setupContactForm(
 
 
 /**
+ * ===== সাইন ইন/আউট হ্যান্ডলার =====
+ */
+
+// লগইন অবস্থা অনুযায়ী UI আপডেট করা (navbar-এ প্রোফাইল/লগইন দেখানো)
+export function updateAuthUI(user) {
+  const loginBtn = document.querySelector('a[href="auth.html"]');
+  const profileLink = document.querySelector('a[href="profile.html"]');
+  
+  if (user) {
+    // লগইন করা অবস্থা
+    if (loginBtn) {
+      loginBtn.innerHTML = `<i class="fas fa-user-circle"></i> <span class="hidden xs:inline">${user.displayName || 'প্রোফাইল'}</span>`;
+      loginBtn.href = 'profile.html';
+    }
+  } else {
+    // লগআউট অবস্থা
+    if (loginBtn) {
+      loginBtn.innerHTML = `<i class="fas fa-sign-in-alt"></i> <span class="hidden xs:inline">লগইন</span>`;
+      loginBtn.href = 'auth.html';
+    }
+  }
+}
+
+
+/**
  * ===== এক্সপোর্ট ডিফল্ট =====
  */
 
-// সব ফাংশন একসাথে এক্সপোর্ট
 export default {
   // Utilities
   isValidPhone,
@@ -429,7 +432,11 @@ export default {
   isUserAdmin,
   requireAuth,
   requireAdmin,
+  updateAuthUI,
 
   // Contact Form Setup
-  setupContactForm
+  setupContactForm,
+
+  // Routing (re-export)
+  navigateTo
 };
