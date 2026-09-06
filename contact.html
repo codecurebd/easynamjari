@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta name="description" content="ইজি নামজারি - যোগাযোগ করুন। ফোন, ইমেইল বা হোয়াটসঅ্যাপের মাধ্যমে আমাদের সাথে সরাসরি কথা বলুন।" />
+  <title>যোগাযোগ | ইজি নামজারি</title>
+  <link rel="icon" href="https://res.cloudinary.com/zmoyykj7/image/upload/v1788431997/cvguf6okasanfhjzadhf.png" type="image/png" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; background: #f8fafc; }
+    .hero-gradient { background: linear-gradient(160deg, #0b2b4a 0%, #1a4b7a 40%, #1e40af 100%); }
+    .nav-link { transition: all 0.3s ease; position: relative; }
+    .nav-link::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background: #1e40af; transition: width 0.3s ease; }
+    .nav-link:hover::after { width: 100%; }
+    .nav-link:hover { color: #1e40af; }
+    .floating-btn { transition: all 0.3s ease; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+    .floating-btn:hover { transform: scale(1.1); }
+    .contact-card { transition: all 0.3s ease; }
+    .contact-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px -12px rgba(0,0,0,0.1); }
+    .form-input:focus { outline: none; border-color: #1e40af; box-shadow: 0 0 0 3px rgba(30,64,175,0.1); }
+  </style>
+</head>
+<body>
+
+<!-- ===== Navbar ===== -->
+<nav class="bg-white shadow-lg sticky top-0 z-50">
+  <div class="container mx-auto px-4 sm:px-6 py-4 flex justify-between items-center flex-wrap gap-3">
+    <a href="index.html" class="flex items-center gap-2 sm:gap-3">
+      <img src="https://res.cloudinary.com/zmoyykj7/image/upload/v1788432073/v2am9blsmmmcul9nycyz.png" alt="ইজি নামজারি" class="h-9 sm:h-11" />
+      <span class="text-xl sm:text-3xl font-bold text-[#0b2b4a]">Easy <span class="text-[#1e40af]">Namjari</span></span>
+    </a>
+    <div class="flex items-center gap-3 sm:gap-6 text-sm sm:text-lg flex-wrap">
+      <a href="index.html" class="nav-link text-gray-700 font-medium">হোম</a>
+      <a href="#services" class="nav-link text-gray-700 font-medium">সেবা</a>
+      <a href="#contact" class="nav-link text-gray-700 font-medium">যোগাযোগ</a>
+      <a href="auth.html" class="bg-[#0b2b4a] text-white px-4 sm:px-7 py-2 sm:py-3 rounded-2xl font-semibold flex items-center gap-1 sm:gap-2 hover:bg-[#1e40af] transition text-sm sm:text-base">
+        <i class="fas fa-sign-in-alt"></i> <span class="hidden xs:inline">লগইন</span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== Hero ===== -->
+<section class="hero-gradient py-16 sm:py-24 text-white">
+  <div class="container mx-auto px-4 sm:px-6 text-center">
+    <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold">যোগাযোগ করুন</h1>
+    <p class="text-base sm:text-xl text-white/80 max-w-2xl mx-auto mt-4">
+      যেকোনো প্রশ্ন, মতামত বা আবেদন সংক্রান্ত যেকোনো বিষয়ে আমাদের সাথে সরাসরি যোগাযোগ করুন।
+    </p>
+  </div>
+</section>
+
+<!-- ===== Contact Section ===== -->
+<section id="contact" class="py-16 sm:py-20 bg-gray-50">
+  <div class="container mx-auto px-4 sm:px-6 max-w-5xl">
+    <div class="grid md:grid-cols-2 gap-8">
+
+      <!-- বাম পাশে: ফর্ম -->
+      <div class="bg-white rounded-3xl shadow-xl p-6 sm:p-8 border border-gray-200">
+        <h2 class="text-2xl sm:text-3xl font-bold text-[#0b2b4a] mb-2">বার্তা পাঠান</h2>
+        <p class="text-gray-600 text-sm mb-6">আমরা ২৪ ঘণ্টার মধ্যে আপনার বার্তার জবাব দেব।</p>
+
+        <form id="contactForm" class="space-y-5">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">আপনার নাম *</label>
+            <input type="text" id="name" required class="form-input w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#1e40af] transition" placeholder="আপনার পূর্ণ নাম" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">মোবাইল নম্বর *</label>
+            <input type="tel" id="phone" required class="form-input w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#1e40af] transition" placeholder="০১XXX-XXXXXX" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">ইমেইল (ঐচ্ছিক)</label>
+            <input type="email" id="email" class="form-input w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#1e40af] transition" placeholder="আপনার ইমেইল" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">বার্তা *</label>
+            <textarea id="message" rows="4" required class="form-input w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#1e40af] transition" placeholder="আপনার বার্তা লিখুন..."></textarea>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">আপনি কীভাবে উত্তর পেতে চান? *</label>
+            <div class="flex flex-wrap gap-4">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="radio" name="contactMethod" value="whatsapp" checked class="w-4 h-4 text-[#1e40af]" />
+                <span><i class="fab fa-whatsapp text-green-600"></i> হোয়াটসঅ্যাপ</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="radio" name="contactMethod" value="email" class="w-4 h-4 text-[#1e40af]" />
+                <span><i class="fas fa-envelope text-[#1e40af]"></i> ইমেইল</span>
+              </label>
+            </div>
+          </div>
+
+          <button type="submit" class="w-full bg-[#0b2b4a] text-white py-4 rounded-2xl font-bold text-lg hover:bg-[#1e40af] transition shadow-lg flex items-center justify-center gap-3">
+            <i class="fas fa-paper-plane"></i> বার্তা পাঠান
+          </button>
+          <p class="text-xs text-gray-500 text-center mt-2">আমরা আপনার তথ্য গোপনীয়তার সাথে সংরক্ষণ করি।</p>
+        </form>
+
+        <!-- সফল বার্তা -->
+        <div id="successMsg" class="hidden mt-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm flex items-center gap-3">
+          <i class="fas fa-check-circle text-green-600 text-lg"></i>
+          <span>আপনার বার্তা সফলভাবে পাঠানো হয়েছে। আমরা শীঘ্রই যোগাযোগ করব।</span>
+        </div>
+      </div>
+
+      <!-- ডান পাশে: যোগাযোগের অন্যান্য মাধ্যম -->
+      <div class="space-y-6">
+        <div class="bg-white rounded-3xl shadow-xl p-6 sm:p-8 border border-gray-200 contact-card">
+          <div class="flex items-center gap-4 mb-4">
+            <i class="fas fa-phone-alt text-3xl text-[#1e40af]"></i>
+            <div>
+              <h3 class="text-xl font-bold text-[#0b2b4a]">ফোন</h3>
+              <p class="text-gray-600">সরাসরি কল করুন</p>
+            </div>
+          </div>
+          <a href="tel:01350141762" class="text-2xl font-semibold text-[#0b2b4a] hover:text-[#1e40af] transition">০১৩৫০১৪১৭৬২</a>
+          <p class="text-sm text-gray-500 mt-2">সকাল ৯টা - সন্ধ্যা ৬টা (শুক্রবার বন্ধ)</p>
+        </div>
+
+        <div class="bg-white rounded-3xl shadow-xl p-6 sm:p-8 border border-gray-200 contact-card">
+          <div class="flex items-center gap-4 mb-4">
+            <i class="fab fa-whatsapp text-3xl text-green-600"></i>
+            <div>
+              <h3 class="text-xl font-bold text-[#0b2b4a]">হোয়াটসঅ্যাপ</h3>
+              <p class="text-gray-600">২৪/৭ চ্যাট সাপোর্ট</p>
+            </div>
+          </div>
+          <a href="https://wa.me/8801350141762" target="_blank" class="text-2xl font-semibold text-green-600 hover:text-green-700 transition">০১৩৫০১৪১৭৬২</a>
+          <p class="text-sm text-gray-500 mt-2">যেকোনো সময় বার্তা পাঠান</p>
+        </div>
+
+        <div class="bg-white rounded-3xl shadow-xl p-6 sm:p-8 border border-gray-200 contact-card">
+          <div class="flex items-center gap-4 mb-4">
+            <i class="fas fa-map-marker-alt text-3xl text-[#1e40af]"></i>
+            <div>
+              <h3 class="text-xl font-bold text-[#0b2b4a]">ঠিকানা</h3>
+              <p class="text-gray-600">সরাসরি দেখা করুন</p>
+            </div>
+          </div>
+          <p class="text-lg font-medium text-[#0b2b4a]">সাভার উপজেলা ভূমি অফিসের পশ্চিম পাশে</p>
+          <p class="text-sm text-gray-500 mt-2">সকাল ৯টা - সন্ধ্যা ৬টা (শুক্রবার বন্ধ)</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== Footer ===== -->
+<footer class="bg-[#0b2b4a] text-white py-10 sm:py-12">
+  <div class="container mx-auto px-4 sm:px-6">
+    <div class="grid sm:grid-cols-3 gap-8 text-center sm:text-left">
+      <div>
+        <div class="text-2xl sm:text-3xl font-bold">ইজি <span class="text-[#60a5fa]">নামজারি</span></div>
+        <p class="text-gray-400 text-sm sm:text-base mt-2"><i class="fas fa-map-marker-alt mr-2"></i> সাভার উপজেলা ভূমি অফিসের পাশে</p>
+        <p class="text-gray-400 text-sm sm:text-base"><i class="fas fa-phone mr-2"></i> ০১৩৫০১৪১৭৬২</p>
+        <p class="text-gray-400 text-sm sm:text-base"><i class="fas fa-envelope mr-2"></i> nopqrshov337@gmail.com</p>
+      </div>
+      <div>
+        <h4 class="text-lg sm:text-xl font-bold mb-3 sm:mb-4">দ্রুত লিংক</h4>
+        <ul class="space-y-2 text-sm sm:text-base">
+          <li><a href="index.html" class="text-gray-400 hover:text-white transition">হোম</a></li>
+          <li><a href="auth.html" class="text-gray-400 hover:text-white transition">লগইন</a></li>
+          <li><a href="contact.html" class="text-gray-400 hover:text-white transition">যোগাযোগ</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-lg sm:text-xl font-bold mb-3 sm:mb-4">সেবাসমূহ</h4>
+        <ul class="space-y-2 text-sm sm:text-base">
+          <li><a href="#" class="text-gray-400 hover:text-white transition">ভূমি মিউটেশন</a></li>
+          <li><a href="#" class="text-gray-400 hover:text-white transition">নামজারি আবেদন</a></li>
+          <li><a href="#" class="text-gray-400 hover:text-white transition">DCR প্রাপ্তি</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400 text-sm sm:text-base">
+      © 2026 Easy Namjari | Managed by: <a href="https://codecurebd.vercel.app" target="_blank" class="text-[#60a5fa] hover:underline font-semibold">CodeCureBD</a> | All Rights Reserved.
+    </div>
+  </div>
+</footer>
+
+<!-- ===== Floating Contact ===== -->
+<div class="fixed bottom-6 sm:bottom-8 right-4 sm:right-8 flex flex-col gap-3 sm:gap-4 z-50">
+  <a href="tel:01350141762" class="floating-btn bg-[#0b2b4a] text-white p-3 sm:p-4 rounded-full shadow-2xl hover:bg-[#1e40af] transition flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16">
+    <i class="fas fa-phone text-2xl sm:text-3xl"></i>
+  </a>
+  <a href="https://wa.me/8801350141762" class="floating-btn bg-green-500 text-white p-3 sm:p-4 rounded-full shadow-2xl hover:bg-green-600 transition flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16">
+    <i class="fab fa-whatsapp text-2xl sm:text-3xl"></i>
+  </a>
+</div>
+
+<!-- ===== Script ===== -->
+<script>
+  document.getElementById('contactForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const name = document.getElementById('name').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const message = document.getElementById('message').value.trim();
+    const method = document.querySelector('input[name="contactMethod"]:checked').value;
+
+    if (!name || !phone || !message) {
+      alert('দয়া করে নাম, মোবাইল নম্বর এবং বার্তা পূরণ করুন।');
+      return;
+    }
+
+    // ফর্ম ডেটা দেখানো (বর্তমানে শুধু কনসোলে)
+    console.log({ name, phone, email, message, method });
+
+    // সফল বার্তা দেখানো
+    document.getElementById('successMsg').classList.remove('hidden');
+    document.getElementById('contactForm').reset();
+
+    // ৫ সেকেন্ড পরে বার্তা লুকানো
+    setTimeout(() => {
+      document.getElementById('successMsg').classList.add('hidden');
+    }, 5000);
+  });
+</script>
+
+</body>
+</html>

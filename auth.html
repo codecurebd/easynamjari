@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta name="description" content="ইজি নামজারি - Google দিয়ে লগইন করুন।" />
+  <title>লগইন | ইজি নামজারি</title>
+  <link rel="icon" href="https://res.cloudinary.com/zmoyykj7/image/upload/v1788431997/cvguf6okasanfhjzadhf.png" type="image/png" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; background: #f8fafc; }
+    .hero-gradient { background: linear-gradient(160deg, #0b2b4a 0%, #1a4b7a 40%, #1e40af 100%); }
+    .nav-link { transition: all 0.3s ease; position: relative; }
+    .nav-link::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background: #1e40af; transition: width 0.3s ease; }
+    .nav-link:hover::after { width: 100%; }
+    .nav-link:hover { color: #1e40af; }
+    .floating-btn { transition: all 0.3s ease; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+    .floating-btn:hover { transform: scale(1.1); }
+    .auth-card { transition: all 0.3s ease; }
+    .auth-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -12px rgba(0,0,0,0.1); }
+    .google-btn { transition: all 0.3s ease; }
+    .google-btn:hover { background: #f1f5f9; transform: scale(1.02); }
+    .error-msg { color: #dc2626; font-size: 0.85rem; margin-top: 6px; display: none; }
+    .error-msg.show { display: block; }
+    .success-msg { color: #16a34a; font-size: 0.85rem; margin-top: 6px; display: none; }
+    .success-msg.show { display: block; }
+    .loading-spinner { display: none; }
+    .loading-spinner.show { display: inline-block; }
+    .user-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #e2e8f0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== Navbar ===== -->
+<nav class="bg-white shadow-lg sticky top-0 z-50">
+  <div class="container mx-auto px-4 sm:px-6 py-4 flex justify-between items-center flex-wrap gap-3">
+    <a href="index.html" class="flex items-center gap-2 sm:gap-3">
+      <img src="https://res.cloudinary.com/zmoyykj7/image/upload/v1788432073/v2am9blsmmmcul9nycyz.png" alt="ইজি নামজারি" class="h-9 sm:h-11" />
+      <span class="text-xl sm:text-3xl font-bold text-[#0b2b4a]">Easy <span class="text-[#1e40af]">Namjari</span></span>
+    </a>
+    <div class="flex items-center gap-3 sm:gap-6 text-sm sm:text-lg flex-wrap">
+      <a href="index.html" class="nav-link text-gray-700 font-medium">হোম</a>
+      <a href="contact.html" class="nav-link text-gray-700 font-medium">যোগাযোগ</a>
+      <a href="auth.html" class="bg-[#0b2b4a] text-white px-4 sm:px-7 py-2 sm:py-3 rounded-2xl font-semibold flex items-center gap-1 sm:gap-2 hover:bg-[#1e40af] transition text-sm sm:text-base">
+        <i class="fas fa-sign-in-alt"></i> <span class="hidden xs:inline">লগইন</span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== Hero ===== -->
+<section class="hero-gradient py-12 sm:py-16 text-white">
+  <div class="container mx-auto px-4 sm:px-6 text-center">
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold">স্বাগতম</h1>
+    <p class="text-base sm:text-xl text-white/80 max-w-2xl mx-auto mt-3">
+      Google অ্যাকাউন্ট দিয়ে লগইন করুন।
+    </p>
+  </div>
+</section>
+
+<!-- ===== Auth Section ===== -->
+<section class="py-12 sm:py-20 bg-gray-50">
+  <div class="container mx-auto px-4 sm:px-6 max-w-md">
+
+    <!-- Card -->
+    <div class="bg-white rounded-3xl shadow-xl p-6 sm:p-8 border border-gray-200 auth-card">
+
+      <!-- User Info (when logged in) -->
+      <div id="userInfo" class="hidden text-center">
+        <div class="flex flex-col items-center">
+          <img id="userPhoto" src="" alt="প্রোফাইল ছবি" class="user-avatar w-20 h-20 rounded-full border-4 border-[#1e40af] mb-3" />
+          <h3 id="userName" class="text-xl font-bold text-[#0b2b4a]"></h3>
+          <p id="userEmail" class="text-gray-600 text-sm"></p>
+          <button id="logoutBtn" class="mt-4 bg-red-500 text-white px-6 py-2 rounded-xl font-semibold hover:bg-red-600 transition">
+            <i class="fas fa-sign-out-alt"></i> লগআউট
+          </button>
+          <a href="admin-panel.html" class="mt-3 inline-block bg-[#0b2b4a] text-white px-6 py-2 rounded-xl font-semibold hover:bg-[#1e40af] transition">
+            <i class="fas fa-arrow-right"></i> অ্যাডমিন প্যানেলে যান
+          </a>
+        </div>
+      </div>
+
+      <!-- Login Form (when logged out) -->
+      <div id="loginForm">
+        <h2 class="text-2xl font-bold text-[#0b2b4a] mb-2">লগইন করুন</h2>
+        <p class="text-gray-600 text-sm mb-6">Google অ্যাকাউন্ট দিয়ে সহজে লগইন করুন।</p>
+
+        <!-- Google Login -->
+        <button id="googleLoginBtn" class="google-btn w-full flex items-center justify-center gap-3 bg-white border border-gray-300 py-4 rounded-2xl font-semibold text-gray-700 hover:bg-gray-50 transition shadow-sm">
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" class="w-6 h-6" />
+          Google দিয়ে লগইন করুন
+        </button>
+
+        <!-- Loading -->
+        <div id="loading" class="loading-spinner text-center mt-4">
+          <i class="fas fa-spinner fa-spin text-[#1e40af] text-2xl"></i>
+          <p class="text-sm text-gray-500 mt-1">লগইন হচ্ছে...</p>
+        </div>
+
+        <!-- Error / Success messages -->
+        <div id="authError" class="error-msg mt-4 text-center"></div>
+        <div id="authSuccess" class="success-msg mt-4 text-center"></div>
+
+        <p class="text-xs text-gray-500 text-center mt-6">
+          লগইন করলে আপনি আমাদের <a href="#" class="text-[#1e40af] font-semibold hover:underline">শর্তাবলী</a> এবং <a href="#" class="text-[#1e40af] font-semibold hover:underline">গোপনীয়তা নীতি</a> মেনে চলছেন।
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== Footer ===== -->
+<footer class="bg-[#0b2b4a] text-white py-10 sm:py-12">
+  <div class="container mx-auto px-4 sm:px-6">
+    <div class="grid sm:grid-cols-3 gap-8 text-center sm:text-left">
+      <div>
+        <div class="text-2xl sm:text-3xl font-bold">ইজি <span class="text-[#60a5fa]">নামজারি</span></div>
+        <p class="text-gray-400 text-sm sm:text-base mt-2"><i class="fas fa-map-marker-alt mr-2"></i> সাভার উপজেলা ভূমি অফিসের পাশে</p>
+        <p class="text-gray-400 text-sm sm:text-base"><i class="fas fa-phone mr-2"></i> ০১৩৫০১৪১৭৬২</p>
+        <p class="text-gray-400 text-sm sm:text-base"><i class="fas fa-envelope mr-2"></i> nopqrshov337@gmail.com</p>
+      </div>
+      <div>
+        <h4 class="text-lg sm:text-xl font-bold mb-3 sm:mb-4">দ্রুত লিংক</h4>
+        <ul class="space-y-2 text-sm sm:text-base">
+          <li><a href="index.html" class="text-gray-400 hover:text-white transition">হোম</a></li>
+          <li><a href="auth.html" class="text-gray-400 hover:text-white transition">লগইন</a></li>
+          <li><a href="contact.html" class="text-gray-400 hover:text-white transition">যোগাযোগ</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-lg sm:text-xl font-bold mb-3 sm:mb-4">সেবাসমূহ</h4>
+        <ul class="space-y-2 text-sm sm:text-base">
+          <li><a href="#" class="text-gray-400 hover:text-white transition">ভূমি মিউটেশন</a></li>
+          <li><a href="#" class="text-gray-400 hover:text-white transition">নামজারি আবেদন</a></li>
+          <li><a href="#" class="text-gray-400 hover:text-white transition">DCR প্রাপ্তি</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400 text-sm sm:text-base">
+      © 2026 Easy Namjari | Managed by: <a href="https://codecurebd.vercel.app" target="_blank" class="text-[#60a5fa] hover:underline font-semibold">CodeCureBD</a> | All Rights Reserved.
+    </div>
+  </div>
+</footer>
+
+<!-- ===== Floating Contact ===== -->
+<div class="fixed bottom-6 sm:bottom-8 right-4 sm:right-8 flex flex-col gap-3 sm:gap-4 z-50">
+  <a href="tel:01350141762" class="floating-btn bg-[#0b2b4a] text-white p-3 sm:p-4 rounded-full shadow-2xl hover:bg-[#1e40af] transition flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16">
+    <i class="fas fa-phone text-2xl sm:text-3xl"></i>
+  </a>
+  <a href="https://wa.me/8801350141762" class="floating-btn bg-green-500 text-white p-3 sm:p-4 rounded-full shadow-2xl hover:bg-green-600 transition flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16">
+    <i class="fab fa-whatsapp text-2xl sm:text-3xl"></i>
+  </a>
+</div>
+
+<!-- ===== Firebase Auth Script ===== -->
+<script type="module">
+  // Import Firebase functions
+  import { 
+    auth, 
+    onAuthStateChanged, 
+    signInWithPopup, 
+    googleProvider, 
+    signOut 
+  } from './firebase-config.js';
+
+  // DOM elements
+  const loginForm = document.getElementById('loginForm');
+  const userInfo = document.getElementById('userInfo');
+  const googleLoginBtn = document.getElementById('googleLoginBtn');
+  const logoutBtn = document.getElementById('logoutBtn');
+  const loading = document.getElementById('loading');
+  const authError = document.getElementById('authError');
+  const authSuccess = document.getElementById('authSuccess');
+  const userName = document.getElementById('userName');
+  const userEmail = document.getElementById('userEmail');
+  const userPhoto = document.getElementById('userPhoto');
+
+  // Helper: show/hide error/success
+  function showError(msg) {
+    authError.textContent = msg;
+    authError.classList.add('show');
+    authSuccess.classList.remove('show');
+    setTimeout(() => authError.classList.remove('show'), 5000);
+  }
+
+  function showSuccess(msg) {
+    authSuccess.textContent = msg;
+    authSuccess.classList.add('show');
+    authError.classList.remove('show');
+    setTimeout(() => authSuccess.classList.remove('show'), 3000);
+  }
+
+  function setLoading(state) {
+    if (state) {
+      loading.classList.add('show');
+      googleLoginBtn.disabled = true;
+      googleLoginBtn.style.opacity = '0.6';
+    } else {
+      loading.classList.remove('show');
+      googleLoginBtn.disabled = false;
+      googleLoginBtn.style.opacity = '1';
+    }
+  }
+
+  // Update UI based on auth state
+  function updateUI(user) {
+    if (user) {
+      // User is logged in
+      loginForm.style.display = 'none';
+      userInfo.classList.remove('hidden');
+      userName.textContent = user.displayName || 'নাম নেই';
+      userEmail.textContent = user.email || 'ইমেইল নেই';
+      userPhoto.src = user.photoURL || 'https://ui-avatars.com/api/?name=' + (user.displayName || 'User') + '&background=1e40af&color=fff&size=80';
+      showSuccess('স্বাগতম! আপনি লগইন করেছেন।');
+    } else {
+      // User is logged out
+      loginForm.style.display = 'block';
+      userInfo.classList.add('hidden');
+    }
+  }
+
+  // Listen to auth state changes
+  onAuthStateChanged(auth, (user) => {
+    updateUI(user);
+    if (user) {
+      // You can redirect to admin page after login
+      // window.location.href = 'admin.html';
+    }
+  });
+
+  // Google Login
+  googleLoginBtn.addEventListener('click', async () => {
+    setLoading(true);
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      // The user is signed in
+      showSuccess('Google লগইন সফল!');
+      setLoading(false);
+      // Redirect to admin page
+      setTimeout(() => {
+        window.location.href = 'admin-panel.html';
+      }, 1000);
+    } catch (error) {
+      setLoading(false);
+      console.error('Google Login Error:', error);
+      let errorMsg = 'লগইন ব্যর্থ হয়েছে। আবার চেষ্টা করুন।';
+      if (error.code === 'auth/popup-closed-by-user') {
+        errorMsg = 'আপনি পপআপ বন্ধ করে দিয়েছেন। আবার চেষ্টা করুন।';
+      } else if (error.code === 'auth/popup-blocked') {
+        errorMsg = 'পপআপ ব্লক করা হয়েছে। ব্রাউজার সেটিংস চেক করুন।';
+      } else if (error.code === 'auth/unauthorized-domain') {
+        errorMsg = 'আপনার ডোমেইন Firebase কনসোলে অনুমোদিত নয়।';
+      }
+      showError(errorMsg);
+    }
+  });
+
+  // Logout
+  logoutBtn.addEventListener('click', async () => {
+    setLoading(true);
+    try {
+      await signOut(auth);
+      showSuccess('আপনি লগআউট করেছেন।');
+      setLoading(false);
+      // Redirect to home or auth page
+      setTimeout(() => {
+        window.location.href = 'auth.html';
+      }, 1000);
+    } catch (error) {
+      setLoading(false);
+      console.error('Logout Error:', error);
+      showError('লগআউট ব্যর্থ হয়েছে।');
+    }
+  });
+
+  // Auto-redirect if already logged in (optional)
+  // Uncomment below to auto redirect to admin if already logged in
+  // onAuthStateChanged(auth, (user) => {
+  //   if (user) {
+  //     window.location.href = 'admin.html';
+  //   }
+  // });
+</script>
+
+</body>
+</html>

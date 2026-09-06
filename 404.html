@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>পেজ খুঁজে পাওয়া যায়নি | ইজি নামজারি</title>
+
+  <!-- Font & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .hero-gradient {
+      background: linear-gradient(160deg, #0b2b4a 0%, #1a4b7a 40%, #1e40af 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-gradient::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.04) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .hero-gradient::after {
+      content: '';
+      position: absolute;
+      bottom: -30%;
+      left: -15%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(96, 165, 250, 0.06) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .error-number {
+      font-size: 8rem;
+      font-weight: 900;
+      color: rgba(255, 255, 255, 0.1);
+      text-shadow: 0 0 60px rgba(96, 165, 250, 0.2);
+      line-height: 1;
+      user-select: none;
+    }
+
+    @media (min-width: 640px) {
+      .error-number {
+        font-size: 12rem;
+      }
+    }
+
+    .floating-btn {
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+    .floating-btn:hover {
+      transform: scale(1.1);
+    }
+
+    /* রিডাইরেক্ট টাইমার */
+    .timer-ring {
+      transition: stroke-dashoffset 1s linear;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== Minimal Navbar (self-contained) ===== -->
+  <nav class="bg-white shadow-lg sticky top-0 z-50">
+    <div class="container mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
+      <a href="index.html" class="flex items-center gap-2 sm:gap-3">
+        <img src="https://res.cloudinary.com/zmoyykj7/image/upload/v1788432073/v2am9blsmmmcul9nycyz.png" alt="ইজি নামজারি" class="h-9 sm:h-11" />
+        <span class="text-xl sm:text-3xl font-bold text-[#0b2b4a]">Easy <span class="text-[#1e40af]">Namjari</span></span>
+      </a>
+      <a href="index.html" class="bg-[#0b2b4a] text-white px-4 sm:px-6 py-2 rounded-2xl text-sm font-semibold hover:bg-[#1e40af] transition">
+        <i class="fas fa-home"></i> হোম
+      </a>
+    </div>
+  </nav>
+
+  <!-- ===== 404 Hero ===== -->
+  <section class="hero-gradient flex-1 flex items-center justify-center py-16 sm:py-24">
+    <div class="container mx-auto px-4 sm:px-6 text-center relative z-10">
+
+      <!-- 404 Number -->
+      <div class="error-number mx-auto">৪০৪</div>
+
+      <!-- Icon -->
+      <div class="text-6xl sm:text-7xl text-[#60a5fa] mb-4">
+        <i class="fas fa-map-signs"></i>
+      </div>
+
+      <!-- Heading -->
+      <h1 class="text-3xl sm:text-5xl md:text-6xl font-bold text-white mb-4">
+        পেজ খুঁজে পাওয়া যায়নি
+      </h1>
+
+      <!-- Description -->
+      <p class="text-base sm:text-xl text-white/80 max-w-2xl mx-auto mb-8">
+        আপনি যে পৃষ্ঠাটি খুঁজছেন তা সরানো হয়েছে, নাম পরিবর্তন করা হয়েছে, অথবা অস্থায়ীভাবে অনুপলব্ধ।
+      </p>
+
+      <!-- Buttons -->
+      <div class="flex flex-wrap gap-4 justify-center">
+        <a href="index.html" class="bg-white text-[#0b2b4a] px-8 sm:px-12 py-4 rounded-2xl text-lg font-semibold hover:scale-105 transition shadow-xl flex items-center gap-2">
+          <i class="fas fa-arrow-left"></i> হোম পেজে যান
+        </a>
+        <a href="contact.html" class="border-2 border-white text-white px-8 sm:px-12 py-4 rounded-2xl text-lg font-semibold hover:bg-white/10 transition flex items-center gap-2">
+          <i class="fas fa-headset"></i> যোগাযোগ করুন
+        </a>
+      </div>
+
+      <!-- Auto Redirect Timer -->
+      <p class="text-white/60 text-sm mt-8">
+        <i class="fas fa-clock mr-2"></i>
+        <span id="countdown">৫</span> সেকেন্ডের মধ্যে হোম পেজে রিডাইরেক্ট হবেন।
+      </p>
+    </div>
+  </section>
+
+  <!-- ===== Footer (self-contained) ===== -->
+  <footer class="bg-[#0b2b4a] text-white py-6 border-t border-white/10">
+    <div class="container mx-auto px-4 text-center text-gray-400 text-sm">
+      © ২০২৬ ইজি নামজারি | Managed by: <a href="https://codecurebd.vercel.app" target="_blank" class="text-[#60a5fa] hover:underline">CodeCureBD</a>
+    </div>
+  </footer>
+
+  <!-- ===== Floating Contact (optional) ===== -->
+  <div class="fixed bottom-6 sm:bottom-8 right-4 sm:right-8 flex flex-col gap-3 sm:gap-4 z-50">
+    <a href="tel:01350141762" class="floating-btn bg-[#0b2b4a] text-white p-3 sm:p-4 rounded-full shadow-2xl hover:bg-[#1e40af] transition flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16">
+      <i class="fas fa-phone text-2xl sm:text-3xl"></i>
+    </a>
+    <a href="https://wa.me/8801350141762" class="floating-btn bg-green-500 text-white p-3 sm:p-4 rounded-full shadow-2xl hover:bg-green-600 transition flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16">
+      <i class="fab fa-whatsapp text-2xl sm:text-3xl"></i>
+    </a>
+  </div>
+
+  <!-- ===== Redirect Script ===== -->
+  <script>
+    (function() {
+      let seconds = 5;
+      const countdownEl = document.getElementById('countdown');
+
+      // কাউন্টডাউন আপডেট
+      const timer = setInterval(() => {
+        seconds--;
+        if (countdownEl) countdownEl.textContent = seconds;
+        if (seconds <= 0) {
+          clearInterval(timer);
+          window.location.href = 'index.html';
+        }
+      }, 1000);
+
+      // ইউজার যদি ক্লিক করে তাহলে টাইমার ক্যান্সেল (আমরা রিডাইরেক্ট করবই, কিন্তু ক্লিক করলে তাড়াতাড়ি)
+      document.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          clearInterval(timer);
+        });
+      });
+
+      // ব্যাকআপ: ৬ সেকেন্ড পর ফোর্স রিডাইরেক্ট (যদি কাউন্টডাউন হ্যাং হয়)
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 6000);
+    })();
+  </script>
+
+</body>
+</html>
