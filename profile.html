@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta name="description" content="ইজি নামজারি - আপনার প্রোফাইল" />
+  <title>প্রোফাইল | ইজি নামজারি</title>
+  <link rel="icon" href="https://res.cloudinary.com/zmoyykj7/image/upload/v1788431997/cvguf6okasanfhjzadhf.png" type="image/png" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Firebase Compat -->
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
+  <style>
+    body { font-family: 'Inter', sans-serif; background: #f8fafc; }
+    .nav-link { transition: all 0.3s ease; position: relative; }
+    .nav-link::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background: #1e40af; transition: width 0.3s ease; }
+    .nav-link:hover::after { width: 100%; }
+    .nav-link:hover { color: #1e40af; }
+    .floating-btn { transition: all 0.3s ease; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+    .floating-btn:hover { transform: scale(1.1); }
+    .profile-card { transition: all 0.3s ease; }
+    .profile-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -12px rgba(0,0,0,0.1); }
+    .info-item { border-bottom: 1px solid #e2e8f0; padding: 12px 0; display: flex; justify-content: space-between; align-items: center; }
+    .info-item:last-child { border-bottom: none; }
+    .info-label { font-weight: 500; color: #475569; }
+    .info-value { font-weight: 600; color: #0b2b4a; }
+    .avatar { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 4px solid #1e40af; }
+    .badge-admin { background: #1e40af; color: white; padding: 4px 16px; border-radius: 40px; font-size: 0.75rem; font-weight: 700; margin-left: 8px; }
+  </style>
+</head>
+<body>
+
+<!-- ===== Navbar ===== -->
+<nav class="bg-white shadow-lg sticky top-0 z-50">
+  <div class="container mx-auto px-4 sm:px-6 py-4 flex justify-between items-center flex-wrap gap-3">
+    <a href="index.html" class="flex items-center gap-2 sm:gap-3">
+      <img src="https://res.cloudinary.com/zmoyykj7/image/upload/v1788432073/v2am9blsmmmcul9nycyz.png" alt="ইজি নামজারি" class="h-9 sm:h-11" />
+      <span class="text-xl sm:text-3xl font-bold text-[#0b2b4a]">Easy <span class="text-[#1e40af]">Namjari</span></span>
+    </a>
+    <div class="flex items-center gap-3 sm:gap-6 text-sm sm:text-lg flex-wrap">
+      <a href="index.html" class="nav-link text-gray-700 font-medium">হোম</a>
+      <a href="contact.html" class="nav-link text-gray-700 font-medium">যোগাযোগ</a>
+      <a href="profile.html" class="bg-[#0b2b4a] text-white px-4 sm:px-7 py-2 sm:py-3 rounded-2xl font-semibold flex items-center gap-1 sm:gap-2 hover:bg-[#1e40af] transition text-sm sm:text-base">
+        <i class="fas fa-user-circle"></i> <span class="hidden xs:inline">প্রোফাইল</span>
+      </a>
+      <button id="logoutNavBtn" class="text-red-500 hover:text-red-700 font-medium transition">
+        <i class="fas fa-sign-out-alt"></i> <span class="hidden xs:inline">লগআউট</span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== Profile Section ===== -->
+<section class="py-12 sm:py-20 bg-gray-50">
+  <div class="container mx-auto px-4 sm:px-6 max-w-3xl">
+
+    <!-- Loading state -->
+    <div id="loadingState" class="text-center py-12">
+      <i class="fas fa-spinner fa-spin text-4xl text-[#1e40af]"></i>
+      <p class="text-gray-600 mt-4">প্রোফাইল লোড হচ্ছে...</p>
+    </div>
+
+    <!-- Profile Card -->
+    <div id="profileCard" class="hidden bg-white rounded-3xl shadow-xl p-6 sm:p-10 border border-gray-200 profile-card">
+      
+      <!-- Avatar & Name -->
+      <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 mb-6">
+        <img id="userAvatar" src="" alt="প্রোফাইল ছবি" class="avatar" />
+        <div class="flex-1 text-center sm:text-left">
+          <div class="flex items-center justify-center sm:justify-start gap-2">
+            <h2 id="userDisplayName" class="text-2xl sm:text-3xl font-bold text-[#0b2b4a]"></h2>
+            <span id="adminBadge" class="badge-admin hidden">অ্যাডমিন</span>
+          </div>
+          <p id="userEmailDisplay" class="text-gray-600 text-sm sm:text-base"></p>
+          <p id="userPhoneDisplay" class="text-gray-600 text-sm sm:text-base"></p>
+        </div>
+      </div>
+
+      <!-- User Info Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+        <div class="info-item">
+          <span class="info-label"><i class="fas fa-id-card mr-2"></i>NID</span>
+          <span id="userNid" class="info-value">—</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label"><i class="fas fa-calendar-alt mr-2"></i>জন্ম তারিখ</span>
+          <span id="userDob" class="info-value">—</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label"><i class="fas fa-phone mr-2"></i>মোবাইল</span>
+          <span id="userPhone" class="info-value">—</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label"><i class="fas fa-envelope mr-2"></i>ইমেইল</span>
+          <span id="userEmail" class="info-value">—</span>
+        </div>
+        <div class="info-item sm:col-span-2">
+          <span class="info-label"><i class="fas fa-user-tag mr-2"></i>অ্যাকাউন্ট টাইপ</span>
+          <span id="userAccountType" class="info-value">—</span>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="mt-8 flex flex-wrap gap-4 justify-center sm:justify-start">
+        <a id="adminPanelLink" href="admin.html" class="hidden bg-[#0b2b4a] text-white px-6 py-3 rounded-xl font-semibold hover:bg-[#1e40af] transition shadow-md flex items-center gap-2">
+          <i class="fas fa-cog"></i> অ্যাডমিন প্যানেল
+        </a>
+        <button id="logoutProfileBtn" class="bg-red-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-red-600 transition shadow-md flex items-center gap-2">
+          <i class="fas fa-sign-out-alt"></i> লগআউট
+        </button>
+      </div>
+    </div>
+
+    <!-- Unauthorized / Not logged in -->
+    <div id="unauthorizedState" class="hidden bg-white rounded-3xl shadow-xl p-12 text-center border border-gray-200">
+      <i class="fas fa-lock text-6xl text-red-500 mb-4"></i>
+      <h2 class="text-2xl font-bold text-[#0b2b4a]">অনুগ্রহ করে লগইন করুন</h2>
+      <p class="text-gray-600 mt-2">আপনার প্রোফাইল দেখতে লগইন করুন।</p>
+      <a href="auth.html" class="inline-block mt-6 bg-[#0b2b4a] text-white px-8 py-3 rounded-xl hover:bg-[#1e40af] transition">
+        <i class="fas fa-sign-in-alt"></i> লগইন পেজে যান
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== Footer ===== -->
+<footer class="bg-[#0b2b4a] text-white py-10 sm:py-12">
+  <div class="container mx-auto px-4 sm:px-6">
+    <div class="grid sm:grid-cols-3 gap-8 text-center sm:text-left">
+      <div>
+        <div class="text-2xl sm:text-3xl font-bold">ইজি <span class="text-[#60a5fa]">নামজারি</span></div>
+        <p class="text-gray-400 text-sm sm:text-base mt-2"><i class="fas fa-map-marker-alt mr-2"></i> সাভার উপজেলা ভূমি অফিসের পাশে</p>
+        <p class="text-gray-400 text-sm sm:text-base"><i class="fas fa-phone mr-2"></i> ০১৩৫০১৪১৭৬২</p>
+        <p class="text-gray-400 text-sm sm:text-base"><i class="fas fa-envelope mr-2"></i> nopqrshov337@gmail.com</p>
+      </div>
+      <div>
+        <h4 class="text-lg sm:text-xl font-bold mb-3 sm:mb-4">দ্রুত লিংক</h4>
+        <ul class="space-y-2 text-sm sm:text-base">
+          <li><a href="index.html" class="text-gray-400 hover:text-white transition">হোম</a></li>
+          <li><a href="profile.html" class="text-gray-400 hover:text-white transition">প্রোফাইল</a></li>
+          <li><a href="contact.html" class="text-gray-400 hover:text-white transition">যোগাযোগ</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-lg sm:text-xl font-bold mb-3 sm:mb-4">সেবাসমূহ</h4>
+        <ul class="space-y-2 text-sm sm:text-base">
+          <li><a href="#" class="text-gray-400 hover:text-white transition">ভূমি মিউটেশন</a></li>
+          <li><a href="#" class="text-gray-400 hover:text-white transition">নামজারি আবেদন</a></li>
+          <li><a href="#" class="text-gray-400 hover:text-white transition">DCR প্রাপ্তি</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400 text-sm sm:text-base">
+      © 2026 Easy Namjari | Managed by: <a href="https://codecurebd.vercel.app" target="_blank" class="text-[#60a5fa] hover:underline font-semibold">CodeCureBD</a> | All Rights Reserved.
+    </div>
+  </div>
+</footer>
+
+<!-- ===== Floating Contact ===== -->
+<div class="fixed bottom-6 sm:bottom-8 right-4 sm:right-8 flex flex-col gap-3 sm:gap-4 z-50">
+  <a href="tel:01350141762" class="floating-btn bg-[#0b2b4a] text-white p-3 sm:p-4 rounded-full shadow-2xl hover:bg-[#1e40af] transition flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16">
+    <i class="fas fa-phone text-2xl sm:text-3xl"></i>
+  </a>
+  <a href="https://wa.me/8801350141762" class="floating-btn bg-green-500 text-white p-3 sm:p-4 rounded-full shadow-2xl hover:bg-green-600 transition flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16">
+    <i class="fab fa-whatsapp text-2xl sm:text-3xl"></i>
+  </a>
+</div>
+
+<!-- ===================================================== -->
+<!-- ===== FIREBASE SCRIPT ===== -->
+<!-- ===================================================== -->
+<script>
+  // Firebase Config
+  const firebaseConfig = {
+    apiKey: "AIzaSyBOpiCSVD8O-uT4CR4_-e9kGpZ1uVHFG54",
+    authDomain: "easy-namjari.firebaseapp.com",
+    projectId: "easy-namjari",
+    storageBucket: "easy-namjari.firebasestorage.app",
+    messagingSenderId: "686038387625",
+    appId: "1:686038387625:web:2a8eebba1b771844fcd2b8"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  // DOM refs
+  const loadingState = document.getElementById('loadingState');
+  const profileCard = document.getElementById('profileCard');
+  const unauthorizedState = document.getElementById('unauthorizedState');
+
+  const userAvatar = document.getElementById('userAvatar');
+  const userDisplayName = document.getElementById('userDisplayName');
+  const userEmailDisplay = document.getElementById('userEmailDisplay');
+  const userPhoneDisplay = document.getElementById('userPhoneDisplay');
+  const userNid = document.getElementById('userNid');
+  const userDob = document.getElementById('userDob');
+  const userPhone = document.getElementById('userPhone');
+  const userEmail = document.getElementById('userEmail');
+  const userAccountType = document.getElementById('userAccountType');
+  const adminBadge = document.getElementById('adminBadge');
+  const adminPanelLink = document.getElementById('adminPanelLink');
+
+  const logoutProfileBtn = document.getElementById('logoutProfileBtn');
+  const logoutNavBtn = document.getElementById('logoutNavBtn');
+
+  // ===== Fetch and display profile =====
+  async function loadProfile(user) {
+    if (!user) {
+      loadingState.classList.add('hidden');
+      unauthorizedState.classList.remove('hidden');
+      return;
+    }
+
+    // Show loading, hide others
+    loadingState.classList.remove('hidden');
+    profileCard.classList.add('hidden');
+    unauthorizedState.classList.add('hidden');
+
+    try {
+      // 1. Get user profile from Auth (displayName, photoURL, email)
+      const displayName = user.displayName || 'ব্যবহারকারী';
+      const photoURL = user.photoURL || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(displayName) + '&background=1e40af&color=fff&size=100';
+      const email = user.email || 'ইমেইল নেই';
+
+      // 2. Get extra data from Firestore
+      const docRef = db.collection('users').doc(user.uid);
+      const docSnap = await docRef.get();
+
+      let userData = {};
+      if (docSnap.exists) {
+        userData = docSnap.data();
+      }
+
+      // 3. Check if user is admin
+      let isAdmin = false;
+      try {
+        const tokenResult = await user.getIdTokenResult();
+        isAdmin = tokenResult.claims.admin === true;
+      } catch (e) {
+        console.warn('Could not fetch admin claim', e);
+      }
+
+      // 4. Populate UI
+      userAvatar.src = photoURL;
+      userAvatar.alt = displayName;
+      userDisplayName.textContent = displayName;
+      userEmailDisplay.textContent = email;
+      userEmail.textContent = email;
+
+      // Phone from Firestore or Auth (if phone provider used)
+      const phone = userData.phone || user.phoneNumber || '—';
+      userPhoneDisplay.textContent = phone;
+      userPhone.textContent = phone;
+
+      userNid.textContent = userData.nid || '—';
+      userDob.textContent = userData.dob ? new Date(userData.dob).toLocaleDateString('bn-BD') : '—';
+
+      // Account type
+      const accountType = isAdmin ? 'অ্যাডমিন' : 'সাধারণ ইউজার';
+      userAccountType.textContent = accountType;
+
+      // Admin badge and panel link
+      if (isAdmin) {
+        adminBadge.classList.remove('hidden');
+        adminPanelLink.classList.remove('hidden');
+      } else {
+        adminBadge.classList.add('hidden');
+        adminPanelLink.classList.add('hidden');
+      }
+
+      // Show profile, hide loading
+      loadingState.classList.add('hidden');
+      profileCard.classList.remove('hidden');
+
+    } catch (error) {
+      console.error('Error loading profile:', error);
+      loadingState.classList.add('hidden');
+      unauthorizedState.classList.remove('hidden');
+    }
+  }
+
+  // ===== Auth state listener =====
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      loadProfile(user);
+    } else {
+      loadingState.classList.add('hidden');
+      profileCard.classList.add('hidden');
+      unauthorizedState.classList.remove('hidden');
+    }
+  });
+
+  // ===== Logout function =====
+  async function handleLogout() {
+    try {
+      await auth.signOut();
+      window.location.href = 'auth.html';
+    } catch (error) {
+      console.error('Logout error:', error);
+      alert('লগআউট ব্যর্থ হয়েছে। আবার চেষ্টা করুন।');
+    }
+  }
+
+  logoutProfileBtn.addEventListener('click', handleLogout);
+  logoutNavBtn.addEventListener('click', handleLogout);
+</script>
+
+</body>
+</html>
