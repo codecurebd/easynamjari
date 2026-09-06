@@ -155,6 +155,13 @@
           <p class="text-gray-600 text-sm mb-6">নিচের তথ্য দিয়ে একটি নতুন অ্যাকাউন্ট তৈরি করুন।</p>
 
           <form id="signupForm">
+            <!-- Email -->
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-700 mb-1">ইমেইল *</label>
+              <input type="email" id="signupEmail" class="form-input w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#1e40af] transition" placeholder="আপনার ইমেইল" />
+              <div id="signupEmailError" class="error-msg">সঠিক ইমেইল দিন</div>
+            </div>
+
             <!-- NID -->
             <div class="mb-4">
               <label class="block text-sm font-medium text-gray-700 mb-1">জাতীয় পরিচয়পত্র (NID) *</label>
@@ -288,6 +295,7 @@
 
   // Sign Up
   const signupForm = document.getElementById('signupForm');
+  const signupEmail = document.getElementById('signupEmail');
   const signupNid = document.getElementById('signupNid');
   const signupDob = document.getElementById('signupDob');
   const signupPhone = document.getElementById('signupPhone');
@@ -297,6 +305,7 @@
   const signupLoading = document.getElementById('signupLoading');
   const signupError = document.getElementById('signupError');
   const signupSuccess = document.getElementById('signupSuccess');
+  const signupEmailError = document.getElementById('signupEmailError');
   const signupNidError = document.getElementById('signupNidError');
   const signupDobError = document.getElementById('signupDobError');
   const signupPhoneError = document.getElementById('signupPhoneError');
@@ -365,8 +374,8 @@
     if (user) {
       userInfo.classList.remove('hidden');
       authForm.style.display = 'none';
-      userName.textContent = user.displayName || user.phoneNumber || 'ব্যবহারকারী';
-      userEmail.textContent = user.email || user.phoneNumber || '';
+      userName.textContent = user.displayName || user.email || 'ব্যবহারকারী';
+      userEmail.textContent = user.email || '';
       userPhoto.src = user.photoURL || 'https://ui-avatars.com/api/?name=' + (user.displayName || 'User') + '&background=1e40af&color=fff&size=80';
     } else {
       userInfo.classList.add('hidden');
@@ -403,6 +412,7 @@
     signinBtn.disabled = true;
     signinBtn.style.opacity = '0.6';
 
+    // Convert phone to email for sign-in (using phone-derived email)
     const phoneClean = phone.replace(/[^0-9]/g, '');
     const email = phoneClean + '@phone.auth';
 
@@ -433,6 +443,7 @@
   // ===== SIGN UP =====
   signupForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+    const email = signupEmail.value.trim();
     const nid = signupNid.value.trim();
     const dob = signupDob.value;
     const phone = signupPhone.value.trim();
@@ -440,6 +451,14 @@
     const confirm = signupConfirm.value;
 
     let valid = true;
+
+    // Email validation
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showError(signupEmailError, 'সঠিক ইমেইল দিন');
+      valid = false;
+    } else {
+      signupEmailError.classList.remove('show');
+    }
 
     if (!nid || !/^\d{10}$/.test(nid)) {
       showError(signupNidError, 'সঠিক ১০ অঙ্কের NID নম্বর দিন');
@@ -477,22 +496,20 @@
     signupBtn.disabled = true;
     signupBtn.style.opacity = '0.6';
 
-    const phoneClean = phone.replace(/[^0-9]/g, '');
-    const email = phoneClean + '@phone.auth';
-
     try {
+      // Create user with provided email
       const userCred = await auth.createUserWithEmailAndPassword(email, password);
       const user = userCred.user;
 
-      // Update display name (using NID as name if no name field)
+      // Update display name with NID (or email)
       await user.updateProfile({ displayName: 'User_' + nid });
 
-      // Save user data to Firestore
+      // Save user data to Firestore including phone, NID, DOB, etc.
       await db.collection('users').doc(user.uid).set({
+        email: email,
         nid: nid,
         dob: dob,
         phone: phone,
-        email: email,
         createdAt: new Date().toISOString()
       });
 
@@ -508,11 +525,11 @@
       console.error('Sign up error:', error);
       let msg = 'অ্যাকাউন্ট তৈরি ব্যর্থ হয়েছে। আবার চেষ্টা করুন।';
       if (error.code === 'auth/email-already-in-use') {
-        msg = 'এই ফোন নম্বরটি ইতিমধ্যে নিবন্ধিত। দয়া করে সাইন ইন করুন।';
+        msg = 'এই ইমেইলটি ইতিমধ্যে নিবন্ধিত। দয়া করে সাইন ইন করুন।';
       } else if (error.code === 'auth/weak-password') {
         msg = 'পাসওয়ার্ড দুর্বল। আরও শক্তিশালী পাসওয়ার্ড দিন।';
       } else if (error.code === 'auth/invalid-email') {
-        msg = 'ফোন নম্বরটি সঠিক নয়।';
+        msg = 'ইমেইলটি সঠিক নয়।';
       } else if (error.code === 'auth/network-request-failed') {
         msg = 'নেটওয়ার্ক সমস্যা। ইন্টারনেট সংযোগ চেক করুন।';
       } else if (error.code === 'auth/operation-not-allowed') {
