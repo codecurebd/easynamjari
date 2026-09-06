@@ -5,10 +5,10 @@
 
 console.log('✅ components.js লোড হয়েছে!');
 
-// ====================== NAVBAR (লগইন স্টেট অনুযায়ী) ======================
+// ====================== NAVBAR ======================
 export function loadNavbar(currentPage = 'index') {
   console.log('✅ loadNavbar চলছে, currentPage:', currentPage);
-  
+
   const navbarHTML = `
     <nav class="bg-white shadow-lg sticky top-0 z-50">
       <div class="container mx-auto px-4 sm:px-6 py-4 flex justify-between items-center flex-wrap gap-3">
@@ -20,7 +20,6 @@ export function loadNavbar(currentPage = 'index') {
           <a href="index.html" class="nav-link text-gray-700 font-medium ${currentPage === 'index' ? 'text-[#1e40af]' : ''}">হোম</a>
           <a href="profile.html" class="nav-link text-gray-700 font-medium ${currentPage === 'profile' ? 'text-[#1e40af]' : ''}">প্রোফাইল</a>
           <a href="contact.html" class="nav-link text-gray-700 font-medium ${currentPage === 'contact' ? 'text-[#1e40af]' : ''}">যোগাযোগ</a>
-          
           <a href="#" id="authBtn" class="bg-[#0b2b4a] text-white px-4 sm:px-7 py-2 sm:py-3 rounded-2xl font-semibold flex items-center gap-1 sm:gap-2 hover:bg-[#1e40af] transition text-sm sm:text-base">
             <i class="fas fa-sign-in-alt"></i> <span class="hidden xs:inline">লগইন</span>
           </a>
@@ -36,11 +35,10 @@ export function loadNavbar(currentPage = 'index') {
     document.body.insertAdjacentHTML('afterbegin', navbarHTML);
   }
 
-  // লগইন বাটন আপডেট (সবচেয়ে গুরুত্বপূর্ণ)
+  // লগইন বাটন আপডেট
   window.updateAuthUI = function(user = null) {
     const btn = document.getElementById('authBtn');
     if (!btn) return;
-
     if (user) {
       btn.innerHTML = `<i class="fas fa-user-circle"></i> <span class="hidden xs:inline">প্রোফাইল</span>`;
       btn.href = 'profile.html';
@@ -50,13 +48,13 @@ export function loadNavbar(currentPage = 'index') {
     }
   };
 
-  window.updateAuthUI(); // প্রথমবার চালু
+  window.updateAuthUI();
 }
 
 // ====================== FOOTER ======================
 export function loadFooter() {
   console.log('✅ loadFooter চলছে');
-  
+
   const footerHTML = `
     <footer class="bg-[#0b2b4a] text-white py-10 sm:py-12">
       <div class="container mx-auto px-4 sm:px-6">
@@ -102,7 +100,7 @@ export function loadFooter() {
 // ====================== FLOATING BUTTONS ======================
 export function loadFloatingButtons() {
   console.log('✅ loadFloatingButtons চলছে');
-  
+
   const floatingHTML = `
     <div class="fixed bottom-6 sm:bottom-8 right-4 sm:right-8 flex flex-col gap-3 sm:gap-4 z-50" id="floatingButtons">
       <a href="tel:01350141762" class="floating-btn bg-[#0b2b4a] text-white p-3 sm:p-4 rounded-full shadow-2xl hover:bg-[#1e40af] transition flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16">

@@ -225,17 +225,7 @@ export async function getApplications(db, getDocs, collection) {
   }
 }
 
-// Optional: helper to get current user as a Promise
-export const getCurrentUser = () => {
-  return new Promise((resolve, reject) => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      unsubscribe();
-      resolve(user);
-    }, reject);
-  });
-};
-
-// মেইন.js-এর শেষে যোগ করুন (যদি না থাকে)
+// ===== অথেনটিকেশন UI আপডেট (গ্লোবাল) =====
 export function updateAuthUI(user = null) {
   const btn = document.getElementById('authBtn');
   if (!btn) return;

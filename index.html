@@ -15,6 +15,10 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <script src="https://cdn.tailwindcss.com"></script>
 
+  <!-- Firebase Compat (auth state শোনার জন্য) -->
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
     body { font-family: 'Inter', sans-serif; background: #f8fafc; }
@@ -193,7 +197,7 @@
   <!-- ===== PAGE CONTENT (SPA) ===== -->
   <div id="page-content">
 
-    <!-- ===== Hero ===== -->
+    <!-- ===== HERO ===== -->
     <section class="hero-gradient py-16 sm:py-24 relative">
       <div class="container mx-auto px-4 sm:px-6 grid md:grid-cols-2 gap-8 md:gap-12 items-center relative z-10">
         <div>
@@ -227,7 +231,7 @@
       </div>
     </section>
 
-    <!-- ===== Services ===== -->
+    <!-- ===== SERVICES ===== -->
     <section id="services" class="py-16 sm:py-20 bg-white">
       <div class="container mx-auto px-4 sm:px-6">
         <div class="text-center mb-10 sm:mb-12">
@@ -235,16 +239,194 @@
           <p class="text-gray-600 text-base sm:text-lg mt-2">পেশাদ্র ও নির্ভুল সেবার মাধ্যমে আমরা আপনার পাশে আছি</p>
         </div>
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-          <!-- Services cards (আপনার আসল কোড অনুসারে) -->
-          <!-- ... (আপনার আসল সেবা কার্ডগুলো রাখুন) ... -->
+          <div class="service-card bg-white border border-gray-200 rounded-3xl p-6 sm:p-8 text-center shadow-sm">
+            <div class="bg-[#0b2b4a]/10 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5">
+              <i class="fas fa-file-signature text-3xl text-[#1e40af]"></i>
+            </div>
+            <h3 class="text-xl font-bold text-[#0b2b4a] mb-2">নামজারি আবেদন</h3>
+            <p class="text-gray-600 text-sm">সঠিক কাগজপত্র সহ অনলাইনে আবেদন জমা দিন, আমরা অফিসে ফলোআপ করি।</p>
+          </div>
+          <div class="service-card bg-white border border-gray-200 rounded-3xl p-6 sm:p-8 text-center shadow-sm">
+            <div class="bg-[#0b2b4a]/10 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5">
+              <i class="fas fa-clock text-3xl text-[#1e40af]"></i>
+            </div>
+            <h3 class="text-xl font-bold text-[#0b2b4a] mb-2">দ্রুত প্রক্রিয়াকরণ</h3>
+            <p class="text-gray-600 text-sm">আবেদন জমা দেওয়ার ২৪-৪৮ ঘণ্টার মধ্যে প্রক্রিয়া শুরু হয়।</p>
+          </div>
+          <div class="service-card bg-white border border-gray-200 rounded-3xl p-6 sm:p-8 text-center shadow-sm">
+            <div class="bg-[#0b2b4a]/10 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5">
+              <i class="fas fa-file-pdf text-3xl text-[#1e40af]"></i>
+            </div>
+            <h3 class="text-xl font-bold text-[#0b2b4a] mb-2">DCR প্রাপ্তি</h3>
+            <p class="text-gray-600 text-sm">সম্পূর্ণ প্রক্রিয়া শেষে DCR কপি হাতে পাবেন, কোনো ঝামেলা নেই।</p>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- ===== Why Us, Pricing, FAQ, Trust, CTA অংশগুলো আপনার আসল কোড অনুসারে রাখুন -->
-    <!-- আমি সংক্ষেপে দেখাচ্ছি, আপনার পুরো কোড কপি করে এখানে রাখুন -->
+    <!-- ===== WHY US ===== -->
+    <section class="py-16 sm:py-20 bg-gray-50">
+      <div class="container mx-auto px-4 sm:px-6">
+        <div class="text-center mb-10 sm:mb-12">
+          <h2 class="text-3xl sm:text-4xl font-bold text-[#0b2b4a]"><i class="fas fa-star text-[#1e40af] mr-2"></i> কেন আমাদের বেছে নেবেন</h2>
+          <p class="text-gray-600 text-base sm:text-lg mt-2">আমরা যা করি তা অনন্য</p>
+        </div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+          <div class="text-center p-6 bg-white rounded-3xl border border-gray-200 shadow-sm">
+            <i class="fas fa-user-check text-5xl text-[#1e40af] mb-4"></i>
+            <h4 class="text-lg font-bold text-[#0b2b4a]">১০০+ সন্তুষ্ট ক্লায়েন্ট</h4>
+            <p class="text-gray-500 text-sm">আমাদের সেবায় আস্থা রেখেছেন বহু মানুষ</p>
+          </div>
+          <div class="text-center p-6 bg-white rounded-3xl border border-gray-200 shadow-sm">
+            <i class="fas fa-shield-alt text-5xl text-[#1e40af] mb-4"></i>
+            <h4 class="text-lg font-bold text-[#0b2b4a]">নির্ভরযোগ্যতা</h4>
+            <p class="text-gray-500 text-sm">আইনি জটিলতা এড়িয়ে সঠিক নামজারি</p>
+          </div>
+          <div class="text-center p-6 bg-white rounded-3xl border border-gray-200 shadow-sm">
+            <i class="fas fa-headset text-5xl text-[#1e40af] mb-4"></i>
+            <h4 class="text-lg font-bold text-[#0b2b4a]">২৪/৭ সাপোর্ট</h4>
+            <p class="text-gray-500 text-sm">যেকোনো সময় আমাদের সাথে যোগাযোগ</p>
+          </div>
+          <div class="text-center p-6 bg-white rounded-3xl border border-gray-200 shadow-sm">
+            <i class="fas fa-rocket text-5xl text-[#1e40af] mb-4"></i>
+            <h4 class="text-lg font-bold text-[#0b2b4a]">দ্রুত ডেলিভারি</h4>
+            <p class="text-gray-500 text-sm">২৪-৪৮ ঘণ্টায় আবেদন প্রক্রিয়া</p>
+          </div>
+        </div>
+      </div>
+    </section>
 
-    <!-- আপনার পুরো কনটেন্ট এখানে আছে (services থেকে শেষ পর্যন্ত) -->
+    <!-- ===== PRICING ===== -->
+    <section class="py-16 sm:py-20 bg-white">
+      <div class="container mx-auto px-4 sm:px-6">
+        <div class="text-center mb-10 sm:mb-12">
+          <h2 class="text-3xl sm:text-4xl font-bold text-[#0b2b4a]"><i class="fas fa-tag text-[#1e40af] mr-2"></i> সেবার মূল্য</h2>
+          <p class="text-gray-600 text-base sm:text-lg mt-2">স্বচ্ছ ও সাশ্রয়ী মূল্যে সেরা সেবা</p>
+        </div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-5xl mx-auto">
+          <div class="pricing-card bg-white border border-gray-200 rounded-3xl p-6 sm:p-8 text-center shadow-sm">
+            <h3 class="text-xl font-bold text-[#0b2b4a]">বেসিক</h3>
+            <div class="text-4xl font-extrabold text-[#1e40af] my-4">৳২,৫০০</div>
+            <ul class="text-left text-gray-600 space-y-2 text-sm">
+              <li><i class="fas fa-check text-green-500 mr-2"></i> নামজারি আবেদন</li>
+              <li><i class="fas fa-check text-green-500 mr-2"></i> কাগজপত্র যাচাই</li>
+              <li><i class="fas fa-check text-green-500 mr-2"></i> ইমেইল সাপোর্ট</li>
+            </ul>
+            <a href="auth.html" class="mt-6 inline-block w-full bg-[#0b2b4a] text-white py-3 rounded-xl font-semibold hover:bg-[#1e40af] transition">আবেদন করুন</a>
+          </div>
+          <div class="pricing-card bg-white border-2 border-[#1e40af] rounded-3xl p-6 sm:p-8 text-center shadow-lg relative">
+            <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#1e40af] text-white px-4 py-1 rounded-full text-xs font-bold">জনপ্রিয়</span>
+            <h3 class="text-xl font-bold text-[#0b2b4a]">স্ট্যান্ডার্ড</h3>
+            <div class="text-4xl font-extrabold text-[#1e40af] my-4">৳৪,৫০০</div>
+            <ul class="text-left text-gray-600 space-y-2 text-sm">
+              <li><i class="fas fa-check text-green-500 mr-2"></i> বেসিক সব সুবিধা</li>
+              <li><i class="fas fa-check text-green-500 mr-2"></i> ডেডিকেটেড ফলোআপ</li>
+              <li><i class="fas fa-check text-green-500 mr-2"></i> DCR প্রাপ্তি</li>
+              <li><i class="fas fa-check text-green-500 mr-2"></i> ফোন সাপোর্ট</li>
+            </ul>
+            <a href="auth.html" class="mt-6 inline-block w-full bg-[#1e40af] text-white py-3 rounded-xl font-semibold hover:bg-[#0b2b4a] transition">আবেদন করুন</a>
+          </div>
+          <div class="pricing-card bg-white border border-gray-200 rounded-3xl p-6 sm:p-8 text-center shadow-sm">
+            <h3 class="text-xl font-bold text-[#0b2b4a]">প্রিমিয়াম</h3>
+            <div class="text-4xl font-extrabold text-[#1e40af] my-4">৳৭,৫০০</div>
+            <ul class="text-left text-gray-600 space-y-2 text-sm">
+              <li><i class="fas fa-check text-green-500 mr-2"></i> স্ট্যান্ডার্ড সব সুবিধা</li>
+              <li><i class="fas fa-check text-green-500 mr-2"></i> অগ্রাধিকার প্রক্রিয়াকরণ</li>
+              <li><i class="fas fa-check text-green-500 mr-2"></i> আইনি পরামর্শ</li>
+              <li><i class="fas fa-check text-green-500 mr-2"></i> ২৪/৭ চ্যাট সাপোর্ট</li>
+            </ul>
+            <a href="auth.html" class="mt-6 inline-block w-full bg-[#0b2b4a] text-white py-3 rounded-xl font-semibold hover:bg-[#1e40af] transition">আবেদন করুন</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== STEPS ===== -->
+    <section class="py-16 sm:py-20 bg-gray-50">
+      <div class="container mx-auto px-4 sm:px-6">
+        <div class="text-center mb-10 sm:mb-12">
+          <h2 class="text-3xl sm:text-4xl font-bold text-[#0b2b4a]"><i class="fas fa-route text-[#1e40af] mr-2"></i> কিভাবে কাজ করে</h2>
+          <p class="text-gray-600 text-base sm:text-lg mt-2">মাত্র ৪টি ধাপে আপনার নামজারি সম্পন্ন</p>
+        </div>
+        <div class="steps-container grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div class="step-item bg-white border border-gray-200 rounded-3xl p-6 sm:p-8 text-center pt-12 shadow-sm">
+            <h4 class="text-xl font-bold text-[#0b2b4a] mt-4">অনলাইনে আবেদন</h4>
+            <p class="text-gray-500 text-sm">আমাদের ওয়েবসাইটে ফর্ম পূরণ করুন</p>
+          </div>
+          <div class="step-item bg-white border border-gray-200 rounded-3xl p-6 sm:p-8 text-center pt-12 shadow-sm">
+            <h4 class="text-xl font-bold text-[#0b2b4a] mt-4">কাগজপত্র যাচাই</h4>
+            <p class="text-gray-500 text-sm">আমরা আপনার ডকুমেন্ট চেক করি</p>
+          </div>
+          <div class="step-item bg-white border border-gray-200 rounded-3xl p-6 sm:p-8 text-center pt-12 shadow-sm">
+            <h4 class="text-xl font-bold text-[#0b2b4a] mt-4">অফিসে জমা</h4>
+            <p class="text-gray-500 text-sm">আমরা আপনার আবেদন জমা দিই</p>
+          </div>
+          <div class="step-item bg-white border border-gray-200 rounded-3xl p-6 sm:p-8 text-center pt-12 shadow-sm">
+            <h4 class="text-xl font-bold text-[#0b2b4a] mt-4">DCR প্রাপ্তি</h4>
+            <p class="text-gray-500 text-sm">সম্পূর্ণ হলে DCR কপি হাতে পান</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== FAQ ===== -->
+    <section class="py-16 sm:py-20 bg-white">
+      <div class="container mx-auto px-4 sm:px-6 max-w-3xl">
+        <div class="text-center mb-10 sm:mb-12">
+          <h2 class="text-3xl sm:text-4xl font-bold text-[#0b2b4a]"><i class="fas fa-question-circle text-[#1e40af] mr-2"></i> সাধারণ জিজ্ঞাসা</h2>
+        </div>
+        <div class="space-y-4">
+          <div class="border border-gray-200 rounded-2xl overflow-hidden">
+            <div class="faq-question flex justify-between items-center p-4 sm:p-6 font-semibold text-[#0b2b4a]">
+              <span>নামজারি করতে কী কী কাগজ লাগে?</span>
+              <i class="fas fa-chevron-down text-gray-400"></i>
+            </div>
+            <div class="faq-answer text-gray-600 text-sm">
+              <p>জাতীয় পরিচয়পত্র, মিউটেশন ফরম, দলিলের কপি, এবং ভূমি করের রশিদ প্রয়োজন। বিস্তারিত জানতে আমাদের সাথে যোগাযোগ করুন।</p>
+            </div>
+          </div>
+          <div class="border border-gray-200 rounded-2xl overflow-hidden">
+            <div class="faq-question flex justify-between items-center p-4 sm:p-6 font-semibold text-[#0b2b4a]">
+              <span>কত দিনের মধ্যে নামজারি সম্পন্ন হয়?</span>
+              <i class="fas fa-chevron-down text-gray-400"></i>
+            </div>
+            <div class="faq-answer text-gray-600 text-sm">
+              <p>সাধারণত ৭-১৫ কার্যদিবসের মধ্যে নামজারি সম্পন্ন হয়। তবে জটিলতা অনুযায়ী সময় পরিবর্তিত হতে পারে।</p>
+            </div>
+          </div>
+          <div class="border border-gray-200 rounded-2xl overflow-hidden">
+            <div class="faq-question flex justify-between items-center p-4 sm:p-6 font-semibold text-[#0b2b4a]">
+              <span>অনলাইনে আবেদন করলে কি অফিসে যেতে হবে?</span>
+              <i class="fas fa-chevron-down text-gray-400"></i>
+            </div>
+            <div class="faq-answer text-gray-600 text-sm">
+              <p>আমরা আপনার পক্ষ থেকে সবকিছু করে দিই, তাই আপনার অফিসে যাওয়ার প্রয়োজন নেই। শুধু অনলাইনে আবেদন করুন।</p>
+            </div>
+          </div>
+          <div class="border border-gray-200 rounded-2xl overflow-hidden">
+            <div class="faq-question flex justify-between items-center p-4 sm:p-6 font-semibold text-[#0b2b4a]">
+              <span>সেবার ফি কত?</span>
+              <i class="fas fa-chevron-down text-gray-400"></i>
+            </div>
+            <div class="faq-answer text-gray-600 text-sm">
+              <p>আমাদের প্যাকেজ অনুযায়ী ফি নির্ধারিত। বেসিক ২,৫০০ টাকা, স্ট্যান্ডার্ড ৪,৫০০ টাকা এবং প্রিমিয়াম ৭,৫০০ টাকা।</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== TRUST & CTA ===== -->
+    <section class="py-16 sm:py-20 bg-[#0b2b4a] text-white">
+      <div class="container mx-auto px-4 sm:px-6 text-center">
+        <h2 class="text-3xl sm:text-4xl font-bold mb-4">আজই শুরু করুন</h2>
+        <p class="text-white/80 text-base sm:text-xl max-w-2xl mx-auto mb-8">আপনার ভূমি মিউটেশন এখন আরও সহজ। মাত্র ক্লিক দূরত্বে আমরা আছি।</p>
+        <div class="flex flex-wrap gap-4 justify-center">
+          <a href="auth.html" class="bg-white text-[#0b2b4a] px-8 sm:px-12 py-4 rounded-2xl text-lg font-semibold hover:scale-105 transition shadow-xl flex items-center gap-2">এখনই আবেদন <i class="fas fa-arrow-right"></i></a>
+          <a href="contact.html" class="border-2 border-white text-white px-8 sm:px-12 py-4 rounded-2xl text-lg font-semibold hover:bg-white/10 transition flex items-center gap-2">যোগাযোগ করুন <i class="fas fa-headset"></i></a>
+        </div>
+      </div>
+    </section>
 
   </div> <!-- end page-content -->
 
@@ -253,23 +435,60 @@
   <!-- ===================================================== -->
   <script type="module">
     import { loadAllComponents } from './components.js';
-    import { showToast } from './main.js';
-
-    // 🔥 এই লাইন যোগ করুন (লগইন বাটনের জন্য)
     import { updateAuthUI } from './main.js';
 
-    // Load components (নেভবার, ফুটার, ফ্লোটিং বাটন)
+    // 1. সব কম্পোনেন্ট লোড করুন (নেভবার, ফুটার, ফ্লোটিং বাটন)
     loadAllComponents('index');
 
-    // 🔥 এই লাইন যোগ করুন (লগইন/লগআউট স্বয়ংক্রিয় করবে)
-    window.updateAuthUI();
+    // 2. Firebase কনফিগার (শুধু auth state শোনার জন্য)
+    const firebaseConfig = {
+      apiKey: "AIzaSyBOpiCSVD8O-uT4CR4_-e9kGpZ1uVHFG54",
+      authDomain: "easy-namjari.firebaseapp.com",
+      projectId: "easy-namjari",
+      storageBucket: "easy-namjari.firebasestorage.app",
+      messagingSenderId: "686038387625",
+      appId: "1:686038387625:web:2a8eebba1b771844fcd2b8"
+    };
 
-    // ===== Typing Animation + FAQ (আপনার আসল কোড) =====
-    // ... (আপনার আসল typing animation এবং FAQ কোড রাখুন)
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
 
-    if (document.getElementById('typedText')) {
-      // typing animation code
+    // 3. অথেনটিকেশন স্টেট পরিবর্তন হলে UI আপডেট করো
+    auth.onAuthStateChanged((user) => {
+      updateAuthUI(user);
+    });
+
+    // ===== TYPING ANIMATION =====
+    const typedText = document.getElementById('typedText');
+    if (typedText) {
+      const phrases = ['নামজারি', 'মিউটেশন', 'DCR প্রাপ্তি', 'ভূমি সেবা'];
+      let i = 0, j = 0, isDeleting = false;
+      function type() {
+        const current = phrases[i];
+        if (isDeleting) {
+          typedText.textContent = current.substring(0, j--);
+          if (j < 0) { isDeleting = false; i = (i + 1) % phrases.length; setTimeout(type, 500); return; }
+          setTimeout(type, 50);
+        } else {
+          typedText.textContent = current.substring(0, j++);
+          if (j > current.length) { isDeleting = true; setTimeout(type, 1500); return; }
+          setTimeout(type, 100);
+        }
+      }
+      type();
     }
+
+    // ===== FAQ TOGGLE =====
+    document.querySelectorAll('.faq-question').forEach((q) => {
+      q.addEventListener('click', () => {
+        const answer = q.nextElementSibling;
+        q.classList.toggle('open');
+        answer.classList.toggle('open');
+      });
+    });
+
+    // ===== (ঐচ্ছিক) ক্লিক ট্র্যাকিং বা অন্য কোনো ইভেন্ট =====
+    console.log('✅ index.html সম্পূর্ণ লোড হয়েছে');
   </script>
 
 </body>
