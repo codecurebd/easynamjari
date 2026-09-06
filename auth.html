@@ -497,7 +497,7 @@
       // Update display name with NID
       await user.updateProfile({ displayName: 'User_' + nid });
 
-      // Save user data to Firestore with userType: 'user'
+      // Save user data to Firestore
       await db.collection('users').doc(user.uid).set({
         email: email,
         nid: nid,
@@ -519,7 +519,35 @@
       console.error('Sign up error:', error);
       let msg = 'অ্যাকাউন্ট তৈরি ব্যর্থ হয়েছে। আবার চেষ্টা করুন।';
       if (error.code === 'auth/email-already-in-use') {
-        msg = 'এই ইমেইলটি ইতিমধ্যে নিবন্ধিত। দয়া করে সাইন ইন করুন।';
+        // If email already registered, try to sign in and then create Firestore doc if missing
+        try {
+          const userCred = await auth.signInWithEmailAndPassword(email, password);
+          const user = userCred.user;
+          // Check if Firestore doc exists, if not create it
+          const docRef = db.collection('users').doc(user.uid);
+          const docSnap = await docRef.get();
+          if (!docSnap.exists) {
+            await docRef.set({
+              email: email,
+              nid: nid,
+              dob: dob,
+              phone: phone,
+              userType: 'user',
+              createdAt: new Date().toISOString()
+            });
+          }
+          showSuccess(signupSuccess, 'আপনার অ্যাকাউন্ট ইতিমধ্যে আছে, লগইন করা হচ্ছে!');
+          setLoading(signupLoading, false);
+          signupBtn.disabled = false;
+          signupBtn.style.opacity = '1';
+          setTimeout(() => window.location.href = 'profile.html', 1000);
+        } catch (signinError) {
+          setLoading(signupLoading, false);
+          signupBtn.disabled = false;
+          signupBtn.style.opacity = '1';
+          showError(signupError, 'অ্যাকাউন্ট ইতিমধ্যে আছে কিন্তু লগইন ব্যর্থ। দয়া করে সাইন ইন করুন।');
+        }
+        return; // Stop further execution
       } else if (error.code === 'auth/weak-password') {
         msg = 'পাসওয়ার্ড দুর্বল। আরও শক্তিশালী পাসওয়ার্ড দিন।';
       } else if (error.code === 'auth/invalid-email') {
