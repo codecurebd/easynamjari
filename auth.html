@@ -188,7 +188,7 @@
   <!-- ===== SCRIPTS ===== -->
   <!-- ===================================================== -->
   <script type="module">
-    import { loadAllComponents, navigateTo } from './components.js';
+    import { loadAllComponents } from './components.js';
     import { showToast } from './main.js';
 
     // Firebase Config
@@ -318,7 +318,9 @@
         setLoading(signinLoading, false);
         signinBtn.disabled = false;
         signinBtn.style.opacity = '1';
-        setTimeout(() => navigateTo('profile'), 1000);
+        setTimeout(() => {
+          window.location.href = 'profile.html';
+        }, 1000);
       } catch (error) {
         setLoading(signinLoading, false);
         signinBtn.disabled = false;
@@ -409,7 +411,9 @@
         setLoading(signupLoading, false);
         signupBtn.disabled = false;
         signupBtn.style.opacity = '1';
-        setTimeout(() => navigateTo('profile'), 1000);
+        setTimeout(() => {
+          window.location.href = 'profile.html';
+        }, 1000);
       } catch (error) {
         setLoading(signupLoading, false);
         signupBtn.disabled = false;
@@ -457,7 +461,9 @@
         setLoading(googleLoading, false);
         googleLoginBtn.disabled = false;
         googleLoginBtn.style.opacity = '1';
-        setTimeout(() => navigateTo('profile'), 1000);
+        setTimeout(() => {
+          window.location.href = 'profile.html';
+        }, 1000);
       } catch (error) {
         setLoading(googleLoading, false);
         googleLoginBtn.disabled = false;
@@ -470,16 +476,6 @@
           msg = 'পপআপ ব্লক করা হয়েছে। ব্রাউজার সেটিংস চেক করুন।';
         }
         showError(googleError, msg);
-      }
-    });
-
-    // SPA routing: handle data-page links
-    document.addEventListener('click', (e) => {
-      const link = e.target.closest('a[data-page]');
-      if (link) {
-        e.preventDefault();
-        const page = link.getAttribute('data-page');
-        navigateTo(page);
       }
     });
   </script>

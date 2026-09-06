@@ -79,7 +79,7 @@
         <i class="fas fa-lock text-6xl text-red-500 mb-4"></i>
         <h2 class="text-2xl font-bold text-[#0b2b4a]">অ্যাক্সেস অস্বীকৃত</h2>
         <p class="text-gray-600 mt-2">আপনার এই পৃষ্ঠাটি দেখার অনুমতি নেই। শুধুমাত্র অ্যাডমিন ইউজাররা প্রবেশ করতে পারেন।</p>
-        <a href="profile.html" class="inline-block mt-6 bg-[#0b2b4a] text-white px-6 py-3 rounded-xl hover:bg-[#1e40af] transition" data-page="profile">
+        <a href="profile.html" class="inline-block mt-6 bg-[#0b2b4a] text-white px-6 py-3 rounded-xl hover:bg-[#1e40af] transition">
           <i class="fas fa-arrow-left"></i> প্রোফাইল পেজে যান
         </a>
       </div>
@@ -173,7 +173,7 @@
   <!-- ===== SCRIPTS ===== -->
   <!-- ===================================================== -->
   <script type="module">
-    import { loadAllComponents, navigateTo } from './components.js';
+    import { loadAllComponents } from './components.js';
     import { showToast } from './main.js';
 
     // Firebase Config
@@ -237,11 +237,11 @@
           adminAvatar.textContent = (user.displayName || 'A').charAt(0).toUpperCase();
         } else {
           // Non-admin: redirect to profile
-          navigateTo('profile');
+          window.location.href = 'profile.html';
         }
       } catch (error) {
         console.error('Error checking admin role:', error);
-        navigateTo('profile');
+        window.location.href = 'profile.html';
       }
     }
 
@@ -258,7 +258,7 @@
     logoutBtn.addEventListener('click', async () => {
       try {
         await auth.signOut();
-        navigateTo('auth');
+        window.location.href = 'auth.html';
       } catch (error) {
         console.error('Logout error:', error);
         showToast('লগআউট ব্যর্থ হয়েছে', 'error');
@@ -271,16 +271,6 @@
         document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
         this.classList.add('active');
       });
-    });
-
-    // SPA routing: handle data-page links
-    document.addEventListener('click', (e) => {
-      const link = e.target.closest('a[data-page]');
-      if (link) {
-        e.preventDefault();
-        const page = link.getAttribute('data-page');
-        navigateTo(page);
-      }
     });
 
     // Hide the default navbar's login button since we are in admin panel

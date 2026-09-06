@@ -94,7 +94,7 @@
           <i class="fas fa-lock text-6xl text-red-500 mb-4"></i>
           <h2 class="text-2xl font-bold text-[#0b2b4a]">অনুগ্রহ করে লগইন করুন</h2>
           <p class="text-gray-600 mt-2">আপনার প্রোফাইল দেখতে লগইন করুন।</p>
-          <a href="auth.html" class="inline-block mt-6 bg-[#0b2b4a] text-white px-8 py-3 rounded-xl hover:bg-[#1e40af] transition" data-page="auth">
+          <a href="auth.html" class="inline-block mt-6 bg-[#0b2b4a] text-white px-8 py-3 rounded-xl hover:bg-[#1e40af] transition">
             <i class="fas fa-sign-in-alt"></i> লগইন পেজে যান
           </a>
         </div>
@@ -108,7 +108,7 @@
   <!-- ===== SCRIPTS ===== -->
   <!-- ===================================================== -->
   <script type="module">
-    import { loadAllComponents, navigateTo } from './components.js';
+    import { loadAllComponents } from './components.js';
     import { showToast } from './main.js';
 
     // Firebase Config
@@ -223,7 +223,7 @@
     async function handleLogout() {
       try {
         await auth.signOut();
-        navigateTo('auth');
+        window.location.href = 'auth.html';
       } catch (error) {
         console.error('Logout error:', error);
         showToast('লগআউট ব্যর্থ হয়েছে', 'error');
@@ -231,16 +231,6 @@
     }
 
     logoutProfileBtn.addEventListener('click', handleLogout);
-
-    // SPA রাউটিং: লিংকগুলোতে ক্লিক করলে নেভিগেট (ডেলিগেশন)
-    document.addEventListener('click', (e) => {
-      const link = e.target.closest('a[data-page]');
-      if (link) {
-        e.preventDefault();
-        const page = link.getAttribute('data-page');
-        navigateTo(page);
-      }
-    });
   </script>
 
 </body>
