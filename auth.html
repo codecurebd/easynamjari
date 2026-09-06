@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-  <meta name="description" content="ইজি নামজারি - Google দিয়ে লগইন করুন।" />
+  <meta name="description" content="ইজি নামজারি - Google বা ফোন নম্বর দিয়ে লগইন করুন।" />
   <title>লগইন | ইজি নামজারি</title>
   <link rel="icon" href="https://res.cloudinary.com/zmoyykj7/image/upload/v1788431997/cvguf6okasanfhjzadhf.png" type="image/png" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -32,21 +32,25 @@
     .floating-btn:hover { transform: scale(1.1); }
     .auth-card { transition: all 0.3s ease; }
     .auth-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -12px rgba(0,0,0,0.1); }
-    .google-btn { transition: all 0.3s ease; }
-    .google-btn:hover { background: #f1f5f9; transform: scale(1.02); }
+    .google-btn, .phone-btn { transition: all 0.3s ease; }
+    .google-btn:hover, .phone-btn:hover { background: #f1f5f9; transform: scale(1.02); }
     .error-msg { color: #dc2626; font-size: 0.85rem; margin-top: 6px; display: none; }
     .error-msg.show { display: block; }
     .success-msg { color: #16a34a; font-size: 0.85rem; margin-top: 6px; display: none; }
     .success-msg.show { display: block; }
     .loading-spinner { display: none; }
     .loading-spinner.show { display: inline-block; }
-    .user-avatar {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid #e2e8f0;
-    }
+    .user-avatar { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid #e2e8f0; }
+    .phone-step-2 { display: none; }
+    .phone-step-2.active { display: block; }
+    .phone-step-1 { display: block; }
+    .phone-step-1.hidden { display: none; }
+    .tab-btn { transition: all 0.3s ease; }
+    .tab-btn.active { background: #0b2b4a; color: white; }
+    .tab-btn:not(.active):hover { background: #e2e8f0; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .form-input:focus { outline: none; border-color: #1e40af; box-shadow: 0 0 0 3px rgba(30,64,175,0.1); }
   </style>
 </head>
 <body>
@@ -73,7 +77,7 @@
   <div class="container mx-auto px-4 sm:px-6 text-center">
     <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold">স্বাগতম</h1>
     <p class="text-base sm:text-xl text-white/80 max-w-2xl mx-auto mt-3">
-      Google অ্যাকাউন্ট দিয়ে লগইন করুন।
+      Google অথবা ফোন নম্বর দিয়ে লগইন করুন।
     </p>
   </div>
 </section>
@@ -85,7 +89,13 @@
     <!-- Card -->
     <div class="bg-white rounded-3xl shadow-xl p-6 sm:p-8 border border-gray-200 auth-card">
 
-      <!-- User Info (when logged in) -->
+      <!-- Tabs -->
+      <div class="flex bg-gray-100 rounded-2xl p-1.5 shadow-inner mb-6">
+        <button id="googleTab" class="tab-btn active flex-1 py-2 px-4 rounded-xl font-bold text-sm sm:text-base transition">Google</button>
+        <button id="phoneTab" class="tab-btn flex-1 py-2 px-4 rounded-xl font-bold text-sm sm:text-base transition">ফোন</button>
+      </div>
+
+      <!-- ===== USER INFO (when logged in) ===== -->
       <div id="userInfo" class="hidden text-center">
         <div class="flex flex-col items-center">
           <img id="userPhoto" src="" alt="প্রোফাইল ছবি" class="user-avatar w-20 h-20 rounded-full border-4 border-[#1e40af] mb-3" />
@@ -100,32 +110,70 @@
         </div>
       </div>
 
-      <!-- Login Form (when logged out) -->
-      <div id="loginForm">
-        <h2 class="text-2xl font-bold text-[#0b2b4a] mb-2">লগইন করুন</h2>
+      <!-- ===== GOOGLE LOGIN TAB ===== -->
+      <div id="googleLoginTab" class="tab-content active">
+        <h2 class="text-2xl font-bold text-[#0b2b4a] mb-2">Google লগইন</h2>
         <p class="text-gray-600 text-sm mb-6">Google অ্যাকাউন্ট দিয়ে সহজে লগইন করুন।</p>
 
-        <!-- Google Login -->
         <button id="googleLoginBtn" class="google-btn w-full flex items-center justify-center gap-3 bg-white border border-gray-300 py-4 rounded-2xl font-semibold text-gray-700 hover:bg-gray-50 transition shadow-sm">
           <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" class="w-6 h-6" />
           Google দিয়ে লগইন করুন
         </button>
 
-        <!-- Loading -->
-        <div id="loading" class="loading-spinner text-center mt-4">
+        <div id="googleLoading" class="loading-spinner text-center mt-4">
           <i class="fas fa-spinner fa-spin text-[#1e40af] text-2xl"></i>
           <p class="text-sm text-gray-500 mt-1">লগইন হচ্ছে...</p>
         </div>
-
-        <!-- Error / Success messages -->
-        <div id="authError" class="error-msg mt-4 text-center"></div>
-        <div id="authSuccess" class="success-msg mt-4 text-center"></div>
-
-        <p class="text-xs text-gray-500 text-center mt-6">
-          লগইন করলে আপনি আমাদের <a href="#" class="text-[#1e40af] font-semibold hover:underline">শর্তাবলী</a> এবং <a href="#" class="text-[#1e40af] font-semibold hover:underline">গোপনীয়তা নীতি</a> মেনে চলছেন।
-        </p>
+        <div id="googleError" class="error-msg mt-4 text-center"></div>
+        <div id="googleSuccess" class="success-msg mt-4 text-center"></div>
       </div>
 
+      <!-- ===== PHONE LOGIN TAB ===== -->
+      <div id="phoneLoginTab" class="tab-content">
+        <h2 class="text-2xl font-bold text-[#0b2b4a] mb-2">ফোন নম্বর লগইন</h2>
+        <p class="text-gray-600 text-sm mb-6">আপনার মোবাইল নম্বরে পাঠানো কোড দিয়ে লগইন করুন।</p>
+
+        <!-- Step 1: Phone number input -->
+        <div id="phoneStep1" class="phone-step-1">
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1">ফোন নম্বর *</label>
+            <input type="tel" id="phoneInput" class="form-input w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#1e40af] transition" placeholder="+8801XXX-XXXXXX" value="+880" />
+            <div id="phoneError" class="error-msg">সঠিক ফোন নম্বর দিন (যেমন: +8801712345678)</div>
+          </div>
+          <button id="sendCodeBtn" class="phone-btn w-full bg-[#0b2b4a] text-white py-4 rounded-2xl font-bold text-lg hover:bg-[#1e40af] transition shadow-lg flex items-center justify-center gap-3">
+            <i class="fas fa-paper-plane"></i> কোড পাঠান
+          </button>
+          <div id="phoneLoading" class="loading-spinner text-center mt-4">
+            <i class="fas fa-spinner fa-spin text-[#1e40af] text-2xl"></i>
+            <p class="text-sm text-gray-500 mt-1">কোড পাঠানো হচ্ছে...</p>
+          </div>
+        </div>
+
+        <!-- Step 2: Verification code input -->
+        <div id="phoneStep2" class="phone-step-2">
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1">ভেরিফিকেশন কোড *</label>
+            <input type="text" id="codeInput" class="form-input w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#1e40af] transition" placeholder="৬-অঙ্কের কোড" maxlength="6" />
+            <div id="codeError" class="error-msg">কোডটি সঠিক নয়</div>
+          </div>
+          <button id="verifyCodeBtn" class="phone-btn w-full bg-[#0b2b4a] text-white py-4 rounded-2xl font-bold text-lg hover:bg-[#1e40af] transition shadow-lg flex items-center justify-center gap-3">
+            <i class="fas fa-check"></i> যাচাই করুন
+          </button>
+          <button id="resendCodeBtn" class="w-full text-sm text-[#1e40af] font-semibold mt-2 hover:underline">পুনরায় কোড পাঠান</button>
+          <div id="verifyLoading" class="loading-spinner text-center mt-4">
+            <i class="fas fa-spinner fa-spin text-[#1e40af] text-2xl"></i>
+            <p class="text-sm text-gray-500 mt-1">যাচাই করা হচ্ছে...</p>
+          </div>
+        </div>
+
+        <div id="phoneErrorMsg" class="error-msg mt-4 text-center"></div>
+        <div id="phoneSuccessMsg" class="success-msg mt-4 text-center"></div>
+      </div>
+
+      <!-- ===== TERMS ===== -->
+      <p class="text-xs text-gray-500 text-center mt-6">
+        লগইন করলে আপনি আমাদের <a href="#" class="text-[#1e40af] font-semibold hover:underline">শর্তাবলী</a> এবং <a href="#" class="text-[#1e40af] font-semibold hover:underline">গোপনীয়তা নীতি</a> মেনে চলছেন।
+      </p>
     </div>
   </div>
 </section>
@@ -173,89 +221,170 @@
   </a>
 </div>
 
-<!-- ===== Firebase Auth Script (import map based) ===== -->
+<!-- ===== Firebase Auth Script ===== -->
 <script type="module">
-  // Firebase ইম্পোর্ট (import map ব্যবহার করছে)
+  // Import Firebase functions
   import { 
     auth, 
     onAuthStateChanged, 
     signInWithPopup, 
     googleProvider, 
-    signOut 
+    signOut,
+    RecaptchaVerifier,
+    signInWithPhoneNumber,
+    PhoneAuthProvider
   } from './firebase-config.js';
 
-  // DOM elements
-  const loginForm = document.getElementById('loginForm');
-  const userInfo = document.getElementById('userInfo');
+  // DOM refs
   const googleLoginBtn = document.getElementById('googleLoginBtn');
   const logoutBtn = document.getElementById('logoutBtn');
-  const loading = document.getElementById('loading');
-  const authError = document.getElementById('authError');
-  const authSuccess = document.getElementById('authSuccess');
+  const googleLoading = document.getElementById('googleLoading');
+  const googleError = document.getElementById('googleError');
+  const googleSuccess = document.getElementById('googleSuccess');
+  const userInfo = document.getElementById('userInfo');
   const userName = document.getElementById('userName');
   const userEmail = document.getElementById('userEmail');
   const userPhoto = document.getElementById('userPhoto');
 
-  // Helper: show/hide error/success
-  function showError(msg) {
-    authError.textContent = msg;
-    authError.classList.add('show');
-    authSuccess.classList.remove('show');
-    setTimeout(() => authError.classList.remove('show'), 5000);
-  }
+  // Phone DOM refs
+  const phoneInput = document.getElementById('phoneInput');
+  const sendCodeBtn = document.getElementById('sendCodeBtn');
+  const codeInput = document.getElementById('codeInput');
+  const verifyCodeBtn = document.getElementById('verifyCodeBtn');
+  const resendCodeBtn = document.getElementById('resendCodeBtn');
+  const phoneLoading = document.getElementById('phoneLoading');
+  const verifyLoading = document.getElementById('verifyLoading');
+  const phoneErrorMsg = document.getElementById('phoneErrorMsg');
+  const phoneSuccessMsg = document.getElementById('phoneSuccessMsg');
+  const phoneStep1 = document.getElementById('phoneStep1');
+  const phoneStep2 = document.getElementById('phoneStep2');
 
-  function showSuccess(msg) {
-    authSuccess.textContent = msg;
-    authSuccess.classList.add('show');
-    authError.classList.remove('show');
-    setTimeout(() => authSuccess.classList.remove('show'), 3000);
-  }
+  // Tabs
+  const googleTab = document.getElementById('googleTab');
+  const phoneTab = document.getElementById('phoneTab');
+  const googleLoginTab = document.getElementById('googleLoginTab');
+  const phoneLoginTab = document.getElementById('phoneLoginTab');
 
-  function setLoading(state) {
+  // Global variables for phone auth
+  let confirmationResult = null;
+  let recaptchaVerifier = null;
+
+  // ===== TAB SWITCHING =====
+  googleTab.addEventListener('click', () => {
+    googleTab.classList.add('active');
+    phoneTab.classList.remove('active');
+    googleLoginTab.classList.add('active');
+    phoneLoginTab.classList.remove('active');
+  });
+  phoneTab.addEventListener('click', () => {
+    phoneTab.classList.add('active');
+    googleTab.classList.remove('active');
+    phoneLoginTab.classList.add('active');
+    googleLoginTab.classList.remove('active');
+  });
+
+  // ===== HELPERS =====
+  function showGoogleError(msg) {
+    googleError.textContent = msg;
+    googleError.classList.add('show');
+    googleSuccess.classList.remove('show');
+    setTimeout(() => googleError.classList.remove('show'), 5000);
+  }
+  function showGoogleSuccess(msg) {
+    googleSuccess.textContent = msg;
+    googleSuccess.classList.add('show');
+    googleError.classList.remove('show');
+    setTimeout(() => googleSuccess.classList.remove('show'), 3000);
+  }
+  function setGoogleLoading(state) {
     if (state) {
-      loading.classList.add('show');
+      googleLoading.classList.add('show');
       googleLoginBtn.disabled = true;
       googleLoginBtn.style.opacity = '0.6';
     } else {
-      loading.classList.remove('show');
+      googleLoading.classList.remove('show');
       googleLoginBtn.disabled = false;
       googleLoginBtn.style.opacity = '1';
     }
   }
 
-  // Update UI based on auth state
-  function updateUI(user) {
-    if (user) {
-      loginForm.style.display = 'none';
-      userInfo.classList.remove('hidden');
-      userName.textContent = user.displayName || 'নাম নেই';
-      userEmail.textContent = user.email || 'ইমেইল নেই';
-      userPhoto.src = user.photoURL || 'https://ui-avatars.com/api/?name=' + (user.displayName || 'User') + '&background=1e40af&color=fff&size=80';
-      showSuccess('স্বাগতম! আপনি লগইন করেছেন।');
+  function showPhoneError(msg) {
+    phoneErrorMsg.textContent = msg;
+    phoneErrorMsg.classList.add('show');
+    phoneSuccessMsg.classList.remove('show');
+    setTimeout(() => phoneErrorMsg.classList.remove('show'), 5000);
+  }
+  function showPhoneSuccess(msg) {
+    phoneSuccessMsg.textContent = msg;
+    phoneSuccessMsg.classList.add('show');
+    phoneErrorMsg.classList.remove('show');
+    setTimeout(() => phoneSuccessMsg.classList.remove('show'), 3000);
+  }
+  function setPhoneLoading(state) {
+    if (state) {
+      phoneLoading.classList.add('show');
+      sendCodeBtn.disabled = true;
+      sendCodeBtn.style.opacity = '0.6';
     } else {
-      loginForm.style.display = 'block';
-      userInfo.classList.add('hidden');
+      phoneLoading.classList.remove('show');
+      sendCodeBtn.disabled = false;
+      sendCodeBtn.style.opacity = '1';
+    }
+  }
+  function setVerifyLoading(state) {
+    if (state) {
+      verifyLoading.classList.add('show');
+      verifyCodeBtn.disabled = true;
+      verifyCodeBtn.style.opacity = '0.6';
+    } else {
+      verifyLoading.classList.remove('show');
+      verifyCodeBtn.disabled = false;
+      verifyCodeBtn.style.opacity = '1';
     }
   }
 
-  // Listen to auth state changes
+  // ===== UPDATE UI ON AUTH STATE =====
+  function updateUI(user) {
+    if (user) {
+      userInfo.classList.remove('hidden');
+      userName.textContent = user.displayName || user.phoneNumber || 'ব্যবহারকারী';
+      userEmail.textContent = user.email || user.phoneNumber || '';
+      userPhoto.src = user.photoURL || 'https://ui-avatars.com/api/?name=' + (user.displayName || 'User') + '&background=1e40af&color=fff&size=80';
+      // Hide login tabs
+      googleLoginTab.style.display = 'none';
+      phoneLoginTab.style.display = 'none';
+      document.querySelector('.tab-btn').style.display = 'none'; // hide tabs
+    } else {
+      userInfo.classList.add('hidden');
+      googleLoginTab.style.display = 'block';
+      phoneLoginTab.style.display = 'block';
+      document.querySelector('.tab-btn').style.display = 'flex';
+      // reset phone steps
+      phoneStep1.classList.remove('hidden');
+      phoneStep2.classList.remove('active');
+      phoneStep2.style.display = 'none';
+      confirmationResult = null;
+      // clear inputs
+      codeInput.value = '';
+    }
+  }
+
   onAuthStateChanged(auth, (user) => {
     updateUI(user);
   });
 
-  // Google Login
+  // ===== GOOGLE LOGIN =====
   googleLoginBtn.addEventListener('click', async () => {
-    setLoading(true);
+    setGoogleLoading(true);
     try {
       const result = await signInWithPopup(auth, googleProvider);
-      showSuccess('Google লগইন সফল!');
-      setLoading(false);
-      // Redirect to admin page after login
+      showGoogleSuccess('Google লগইন সফল!');
+      setGoogleLoading(false);
       setTimeout(() => {
         window.location.href = 'admin.html';
       }, 1000);
     } catch (error) {
-      setLoading(false);
+      setGoogleLoading(false);
       console.error('Google Login Error:', error);
       let errorMsg = 'লগইন ব্যর্থ হয়েছে। আবার চেষ্টা করুন।';
       if (error.code === 'auth/popup-closed-by-user') {
@@ -265,26 +394,141 @@
       } else if (error.code === 'auth/unauthorized-domain') {
         errorMsg = 'আপনার ডোমেইন Firebase কনসোলে অনুমোদিত নয়।';
       }
-      showError(errorMsg);
+      showGoogleError(errorMsg);
     }
   });
 
-  // Logout
+  // ===== LOGOUT =====
   logoutBtn.addEventListener('click', async () => {
-    setLoading(true);
     try {
       await signOut(auth);
-      showSuccess('আপনি লগআউট করেছেন।');
-      setLoading(false);
+      showGoogleSuccess('আপনি লগআউট করেছেন।');
       setTimeout(() => {
         window.location.href = 'auth.html';
       }, 1000);
     } catch (error) {
-      setLoading(false);
       console.error('Logout Error:', error);
-      showError('লগআউট ব্যর্থ হয়েছে।');
+      showGoogleError('লগআউট ব্যর্থ হয়েছে।');
     }
   });
+
+  // ===== PHONE AUTH =====
+  // Initialize reCAPTCHA verifier (invisible)
+  function initializeRecaptcha() {
+    if (!recaptchaVerifier) {
+      recaptchaVerifier = new RecaptchaVerifier(auth, 'sendCodeBtn', {
+        size: 'invisible',
+        callback: (response) => {
+          // reCAPTCHA solved, allow signInWithPhoneNumber.
+          // This will be triggered automatically when we call verify()
+        }
+      });
+    }
+    return recaptchaVerifier;
+  }
+
+  // Send verification code
+  sendCodeBtn.addEventListener('click', async () => {
+    const phone = phoneInput.value.trim();
+    // Basic validation (must start with + and have at least 10 digits)
+    if (!phone || !phone.startsWith('+') || phone.length < 10) {
+      showPhoneError('সঠিক ফোন নম্বর দিন (যেমন: +8801712345678)');
+      return;
+    }
+
+    setPhoneLoading(true);
+    try {
+      const verifier = initializeRecaptcha();
+      // Ensure the reCAPTCHA is rendered (invisible)
+      await verifier.render();
+      const result = await signInWithPhoneNumber(auth, phone, verifier);
+      confirmationResult = result;
+      // Move to step 2
+      phoneStep1.classList.add('hidden');
+      phoneStep2.style.display = 'block';
+      phoneStep2.classList.add('active');
+      showPhoneSuccess('ভেরিফিকেশন কোড পাঠানো হয়েছে। আপনার ফোন চেক করুন।');
+      setPhoneLoading(false);
+    } catch (error) {
+      setPhoneLoading(false);
+      console.error('Phone sign-in error:', error);
+      let errorMsg = 'কোড পাঠাতে ব্যর্থ হয়েছে। আবার চেষ্টা করুন।';
+      if (error.code === 'auth/invalid-phone-number') {
+        errorMsg = 'ফোন নম্বরটি সঠিক নয়।';
+      } else if (error.code === 'auth/too-many-requests') {
+        errorMsg = 'অনেক বেশি চেষ্টা করেছেন। কিছুক্ষণ পর আবার চেষ্টা করুন।';
+      } else if (error.code === 'auth/captcha-check-failed') {
+        errorMsg = 'reCAPTCHA যাচাই ব্যর্থ হয়েছে। পৃষ্ঠা রিফ্রেশ করে আবার চেষ্টা করুন।';
+      }
+      showPhoneError(errorMsg);
+      // Reset reCAPTCHA
+      if (recaptchaVerifier) {
+        recaptchaVerifier.clear();
+        recaptchaVerifier = null;
+      }
+    }
+  });
+
+  // Verify code
+  verifyCodeBtn.addEventListener('click', async () => {
+    const code = codeInput.value.trim();
+    if (!code || code.length !== 6) {
+      showPhoneError('৬-অঙ্কের কোড দিন।');
+      return;
+    }
+
+    if (!confirmationResult) {
+      showPhoneError('কোনো সক্রিয় সেশন নেই। পুনরায় কোড পাঠান।');
+      return;
+    }
+
+    setVerifyLoading(true);
+    try {
+      const result = await confirmationResult.confirm(code);
+      // Successfully signed in
+      showPhoneSuccess('লগইন সফল!');
+      setVerifyLoading(false);
+      setTimeout(() => {
+        window.location.href = 'admin.html';
+      }, 1000);
+    } catch (error) {
+      setVerifyLoading(false);
+      console.error('Verification error:', error);
+      let errorMsg = 'কোড সঠিক নয়। আবার চেষ্টা করুন।';
+      if (error.code === 'auth/invalid-verification-code') {
+        errorMsg = 'কোডটি সঠিক নয়।';
+      } else if (error.code === 'auth/expired-action-code') {
+        errorMsg = 'কোডের মেয়াদ শেষ হয়ে গেছে। পুনরায় কোড পাঠান।';
+      }
+      showPhoneError(errorMsg);
+    }
+  });
+
+  // Resend code
+  resendCodeBtn.addEventListener('click', () => {
+    // Reset to step 1
+    phoneStep1.classList.remove('hidden');
+    phoneStep2.style.display = 'none';
+    phoneStep2.classList.remove('active');
+    confirmationResult = null;
+    codeInput.value = '';
+    // Clear any messages
+    phoneErrorMsg.classList.remove('show');
+    phoneSuccessMsg.classList.remove('show');
+    // Reset reCAPTCHA if exists
+    if (recaptchaVerifier) {
+      recaptchaVerifier.clear();
+      recaptchaVerifier = null;
+    }
+    showPhoneSuccess('পুনরায় কোড পাঠাতে আবার "কোড পাঠান" বাটনে ক্লিক করুন।');
+  });
+
+  // Auto-redirect if already logged in (optional)
+  // onAuthStateChanged(auth, (user) => {
+  //   if (user) {
+  //     window.location.href = 'admin.html';
+  //   }
+  // });
 </script>
 
 </body>
