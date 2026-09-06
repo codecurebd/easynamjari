@@ -1,8 +1,4 @@
 // components.js
-// ============================================
-// পারফেক্ট নেভবার + ফুটার + ফ্লোটিং বাটন (লগইন স্টেট সঠিক দেখাবে)
-// ============================================
-
 console.log('✅ components.js লোড হয়েছে!');
 
 // ====================== NAVBAR ======================
@@ -28,13 +24,16 @@ export function loadNavbar(currentPage = 'index') {
     </nav>
   `;
 
-  const existingNav = document.querySelector('nav.bg-white.shadow-lg');
-  if (existingNav) {
-    existingNav.outerHTML = navbarHTML;
+  // পুরানো navbar সরিয়ে নতুন যোগ
+  const oldNav = document.querySelector('nav.bg-white.shadow-lg');
+  if (oldNav) {
+    oldNav.outerHTML = navbarHTML;
   } else {
+    // প্রথম child হিসেবে যোগ
     document.body.insertAdjacentHTML('afterbegin', navbarHTML);
   }
 
+  // authBtn আপডেট ফাংশন
   window.updateAuthUI = function(user = null) {
     const btn = document.getElementById('authBtn');
     if (!btn) return;
@@ -47,6 +46,7 @@ export function loadNavbar(currentPage = 'index') {
     }
   };
 
+  // ডিফল্ট কল (লগইন স্টেট না জানলে)
   window.updateAuthUI();
 }
 
@@ -88,11 +88,12 @@ export function loadFooter() {
     </footer>
   `;
 
-  // আগের ফুটার সরিয়ে নতুন যোগ করি
-  const existingFooter = document.querySelector('footer.bg-[#0b2b4a]');
-  if (existingFooter) {
-    existingFooter.outerHTML = footerHTML;
+  // পুরানো ফুটার সরান
+  const oldFooter = document.querySelector('footer.bg-\\[\\#0b2b4a\\]');
+  if (oldFooter) {
+    oldFooter.outerHTML = footerHTML;
   } else {
+    // body-র শেষে যোগ করুন
     document.body.insertAdjacentHTML('beforeend', footerHTML);
   }
 }
@@ -112,6 +113,7 @@ export function loadFloatingButtons() {
     </div>
   `;
 
+  // স্টাইল একবার যোগ করুন
   if (!document.getElementById('floating-style')) {
     const style = document.createElement('style');
     style.id = 'floating-style';

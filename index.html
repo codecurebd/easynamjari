@@ -15,11 +15,12 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Firebase Compat (auth state শোনার জন্য) -->
+  <!-- Firebase Compat -->
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 
   <style>
+    /* সব স্টাইল আগের মতো, তবে FAQ অংশে ক্লাস .open ব্যবহার করেছি */
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
     body { font-family: 'Inter', sans-serif; background: #f8fafc; }
 
@@ -28,7 +29,6 @@
       position: relative;
       overflow: hidden;
     }
-
     .hero-gradient::before {
       content: '';
       position: absolute;
@@ -40,7 +40,6 @@
       border-radius: 50%;
       pointer-events: none;
     }
-
     .hero-gradient::after {
       content: '';
       position: absolute;
@@ -119,6 +118,7 @@
       box-shadow: 0 12px 30px rgba(0,0,0,0.06);
     }
 
+    /* FAQ স্টাইল */
     .faq-question {
       cursor: pointer;
       transition: all 0.3s ease;
@@ -162,7 +162,6 @@
       50% { transform: scale(1.05); opacity: 0.6; }
       100% { transform: scale(0.95); opacity: 0.3; }
     }
-
     .gps-art .gps-icon-wrapper {
       position: relative;
       z-index: 10;
@@ -183,7 +182,6 @@
       color: #60a5fa;
       text-shadow: 0 0 40px rgba(96, 165, 250, 0.3);
     }
-
     @media (max-width: 640px) {
       .hero-gradient { background: linear-gradient(160deg, #0b2b4a 0%, #1a4b7a 60%, #1e40af 100%); }
       .gps-art .gps-icon-wrapper { width: 100px; height: 100px; }
@@ -331,7 +329,7 @@
           </div>
           <div class="pricing-card bg-white border border-gray-200 rounded-3xl p-6 sm:p-8 text-center shadow-sm">
             <h3 class="text-xl font-bold text-[#0b2b4a]">প্রিমিয়াম</h3>
-            <div class="text-4xl font-extrabold text-[#1e40af] my-4">৳৮,০০০</div>   <!-- মূল্য পরিবর্তন করা হয়েছে -->
+            <div class="text-4xl font-extrabold text-[#1e40af] my-4">৳৮,০০০</div>
             <ul class="text-left text-gray-600 space-y-2 text-sm">
               <li><i class="fas fa-check text-green-500 mr-2"></i> স্ট্যান্ডার্ড সব সুবিধা</li>
               <li><i class="fas fa-check text-green-500 mr-2"></i> অগ্রাধিকার প্রক্রিয়াকরণ</li>
@@ -378,9 +376,10 @@
         <div class="text-center mb-10 sm:mb-12">
           <h2 class="text-3xl sm:text-4xl font-bold text-[#0b2b4a]"><i class="fas fa-question-circle text-[#1e40af] mr-2"></i> সাধারণ জিজ্ঞাসা</h2>
         </div>
-        <div class="space-y-4" id="faqContainer">
+        <div class="space-y-4">
+          <!-- FAQ 1 -->
           <div class="border border-gray-200 rounded-2xl overflow-hidden">
-            <div class="faq-question flex justify-between items-center p-4 sm:p-6 font-semibold text-[#0b2b4a]">
+            <div class="faq-question flex justify-between items-center p-4 sm:p-6 font-semibold text-[#0b2b4a]" onclick="toggleFAQ(this)">
               <span>নামজারি করতে কী কী কাগজ লাগে?</span>
               <i class="fas fa-chevron-down text-gray-400"></i>
             </div>
@@ -388,8 +387,9 @@
               <p>জাতীয় পরিচয়পত্র, মিউটেশন ফরম, দলিলের কপি, এবং ভূমি করের রশিদ প্রয়োজন। বিস্তারিত জানতে আমাদের সাথে যোগাযোগ করুন।</p>
             </div>
           </div>
+          <!-- FAQ 2 -->
           <div class="border border-gray-200 rounded-2xl overflow-hidden">
-            <div class="faq-question flex justify-between items-center p-4 sm:p-6 font-semibold text-[#0b2b4a]">
+            <div class="faq-question flex justify-between items-center p-4 sm:p-6 font-semibold text-[#0b2b4a]" onclick="toggleFAQ(this)">
               <span>কত দিনের মধ্যে নামজারি সম্পন্ন হয়?</span>
               <i class="fas fa-chevron-down text-gray-400"></i>
             </div>
@@ -397,8 +397,9 @@
               <p>সাধারণত ৭-১৫ কার্যদিবসের মধ্যে নামজারি সম্পন্ন হয়। তবে জটিলতা অনুযায়ী সময় পরিবর্তিত হতে পারে।</p>
             </div>
           </div>
+          <!-- FAQ 3 -->
           <div class="border border-gray-200 rounded-2xl overflow-hidden">
-            <div class="faq-question flex justify-between items-center p-4 sm:p-6 font-semibold text-[#0b2b4a]">
+            <div class="faq-question flex justify-between items-center p-4 sm:p-6 font-semibold text-[#0b2b4a]" onclick="toggleFAQ(this)">
               <span>অনলাইনে আবেদন করলে কি অফিসে যেতে হবে?</span>
               <i class="fas fa-chevron-down text-gray-400"></i>
             </div>
@@ -406,8 +407,9 @@
               <p>আমরা আপনার পক্ষ থেকে সবকিছু করে দিই, তাই আপনার অফিসে যাওয়ার প্রয়োজন নেই। শুধু অনলাইনে আবেদন করুন।</p>
             </div>
           </div>
+          <!-- FAQ 4 -->
           <div class="border border-gray-200 rounded-2xl overflow-hidden">
-            <div class="faq-question flex justify-between items-center p-4 sm:p-6 font-semibold text-[#0b2b4a]">
+            <div class="faq-question flex justify-between items-center p-4 sm:p-6 font-semibold text-[#0b2b4a]" onclick="toggleFAQ(this)">
               <span>সেবার ফি কত?</span>
               <i class="fas fa-chevron-down text-gray-400"></i>
             </div>
@@ -436,14 +438,27 @@
   <!-- ===================================================== -->
   <!-- ===== SCRIPTS ===== -->
   <!-- ===================================================== -->
+  <script>
+    // গ্লোবাল FAQ টগল ফাংশন
+    function toggleFAQ(element) {
+      // 'open' ক্লাস টগল করি প্রশ্নের
+      element.classList.toggle('open');
+      // তার পরের এলিমেন্ট হলো উত্তর (faq-answer)
+      const answer = element.nextElementSibling;
+      if (answer && answer.classList.contains('faq-answer')) {
+        answer.classList.toggle('open');
+      }
+    }
+  </script>
+
   <script type="module">
     import { loadAllComponents } from './components.js';
     import { updateAuthUI } from './main.js';
 
-    // 1. সব কম্পোনেন্ট লোড করুন (নেভবার, ফুটার, ফ্লোটিং বাটন)
+    // 1. সব কম্পোনেন্ট লোড করুন
     loadAllComponents('index');
 
-    // 2. Firebase কনফিগার (শুধু auth state শোনার জন্য)
+    // 2. Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyBOpiCSVD8O-uT4CR4_-e9kGpZ1uVHFG54",
       authDomain: "easy-namjari.firebaseapp.com",
@@ -456,7 +471,6 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
-    // 3. অথেনটিকেশন স্টেট পরিবর্তন হলে UI আপডেট করো
     auth.onAuthStateChanged((user) => {
       updateAuthUI(user);
     });
@@ -480,18 +494,6 @@
       }
       type();
     }
-
-    // ===== FAQ TOGGLE (ইভেন্ট ডেলিগেশন) =====
-    document.addEventListener('click', function(e) {
-      const question = e.target.closest('.faq-question');
-      if (!question) return;
-      
-      const answer = question.nextElementSibling;
-      if (!answer || !answer.classList.contains('faq-answer')) return;
-      
-      question.classList.toggle('open');
-      answer.classList.toggle('open');
-    });
 
     console.log('✅ index.html সম্পূর্ণ লোড হয়েছে');
   </script>
