@@ -130,7 +130,10 @@
       transition: max-height 0.4s ease, padding 0.3s ease;
       padding: 0 24px;
     }
-    .faq-answer.open { max-height: 400px; padding: 0 24px 24px; }
+    .faq-answer.open {
+      max-height: 400px;
+      padding: 0 24px 24px;
+    }
     .faq-question .fa-chevron-down { transition: transform 0.3s ease; }
     .faq-question.open .fa-chevron-down { transform: rotate(180deg); }
 
@@ -328,7 +331,7 @@
           </div>
           <div class="pricing-card bg-white border border-gray-200 rounded-3xl p-6 sm:p-8 text-center shadow-sm">
             <h3 class="text-xl font-bold text-[#0b2b4a]">প্রিমিয়াম</h3>
-            <div class="text-4xl font-extrabold text-[#1e40af] my-4">৳৭,৫০০</div>
+            <div class="text-4xl font-extrabold text-[#1e40af] my-4">৳৮,০০০</div>   <!-- মূল্য পরিবর্তন করা হয়েছে -->
             <ul class="text-left text-gray-600 space-y-2 text-sm">
               <li><i class="fas fa-check text-green-500 mr-2"></i> স্ট্যান্ডার্ড সব সুবিধা</li>
               <li><i class="fas fa-check text-green-500 mr-2"></i> অগ্রাধিকার প্রক্রিয়াকরণ</li>
@@ -375,7 +378,7 @@
         <div class="text-center mb-10 sm:mb-12">
           <h2 class="text-3xl sm:text-4xl font-bold text-[#0b2b4a]"><i class="fas fa-question-circle text-[#1e40af] mr-2"></i> সাধারণ জিজ্ঞাসা</h2>
         </div>
-        <div class="space-y-4">
+        <div class="space-y-4" id="faqContainer">
           <div class="border border-gray-200 rounded-2xl overflow-hidden">
             <div class="faq-question flex justify-between items-center p-4 sm:p-6 font-semibold text-[#0b2b4a]">
               <span>নামজারি করতে কী কী কাগজ লাগে?</span>
@@ -409,7 +412,7 @@
               <i class="fas fa-chevron-down text-gray-400"></i>
             </div>
             <div class="faq-answer text-gray-600 text-sm">
-              <p>আমাদের প্যাকেজ অনুযায়ী ফি নির্ধারিত। বেসিক ২,৫০০ টাকা, স্ট্যান্ডার্ড ৪,৫০০ টাকা এবং প্রিমিয়াম ৭,৫০০ টাকা।</p>
+              <p>আমাদের প্যাকেজ অনুযায়ী ফি নির্ধারিত। বেসিক ২,৫০০ টাকা, স্ট্যান্ডার্ড ৪,৫০০ টাকা এবং প্রিমিয়াম ৮,০০০ টাকা।</p>
             </div>
           </div>
         </div>
@@ -478,16 +481,18 @@
       type();
     }
 
-    // ===== FAQ TOGGLE =====
-    document.querySelectorAll('.faq-question').forEach((q) => {
-      q.addEventListener('click', () => {
-        const answer = q.nextElementSibling;
-        q.classList.toggle('open');
-        answer.classList.toggle('open');
-      });
+    // ===== FAQ TOGGLE (ইভেন্ট ডেলিগেশন) =====
+    document.addEventListener('click', function(e) {
+      const question = e.target.closest('.faq-question');
+      if (!question) return;
+      
+      const answer = question.nextElementSibling;
+      if (!answer || !answer.classList.contains('faq-answer')) return;
+      
+      question.classList.toggle('open');
+      answer.classList.toggle('open');
     });
 
-    // ===== (ঐচ্ছিক) ক্লিক ট্র্যাকিং বা অন্য কোনো ইভেন্ট =====
     console.log('✅ index.html সম্পূর্ণ লোড হয়েছে');
   </script>
 

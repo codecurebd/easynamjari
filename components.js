@@ -35,7 +35,6 @@ export function loadNavbar(currentPage = 'index') {
     document.body.insertAdjacentHTML('afterbegin', navbarHTML);
   }
 
-  // লগইন বাটন আপডেট
   window.updateAuthUI = function(user = null) {
     const btn = document.getElementById('authBtn');
     if (!btn) return;
@@ -89,6 +88,7 @@ export function loadFooter() {
     </footer>
   `;
 
+  // আগের ফুটার সরিয়ে নতুন যোগ করি
   const existingFooter = document.querySelector('footer.bg-[#0b2b4a]');
   if (existingFooter) {
     existingFooter.outerHTML = footerHTML;
