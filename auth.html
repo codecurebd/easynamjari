@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Firebase Compat (CDN) -->
+  <!-- Firebase Compat -->
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -113,9 +113,9 @@
 
           <form id="signinForm">
             <div class="mb-4">
-              <label class="block text-sm font-medium text-gray-700 mb-1">মোবাইল নম্বর *</label>
-              <input type="tel" id="signinPhone" class="form-input w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#1e40af] transition" placeholder="+880 1712-345678" value="+880" />
-              <div id="signinPhoneError" class="error-msg">সঠিক ফোন নম্বর দিন (যেমন: +8801712345678)</div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">ইমেইল *</label>
+              <input type="email" id="signinEmail" class="form-input w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#1e40af] transition" placeholder="আপনার ইমেইল" />
+              <div id="signinEmailError" class="error-msg">সঠিক ইমেইল দিন</div>
             </div>
             <div class="mb-4">
               <label class="block text-sm font-medium text-gray-700 mb-1">পাসওয়ার্ড *</label>
@@ -161,19 +161,9 @@
               <div id="signupNameError" class="error-msg">দয়া করে আপনার নাম দিন</div>
             </div>
             <div class="mb-4">
-              <label class="block text-sm font-medium text-gray-700 mb-1">জাতীয় পরিচয়পত্র (NID) *</label>
-              <input type="text" id="signupNid" class="form-input w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#1e40af] transition" placeholder="১০ অঙ্কের NID নম্বর" maxlength="10" />
-              <div id="signupNidError" class="error-msg">সঠিক ১০ অঙ্কের NID নম্বর দিন</div>
-            </div>
-            <div class="mb-4">
-              <label class="block text-sm font-medium text-gray-700 mb-1">জন্ম তারিখ *</label>
-              <input type="date" id="signupDob" class="form-input w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#1e40af] transition" />
-              <div id="signupDobError" class="error-msg">আপনার জন্ম তারিখ নির্বাচন করুন</div>
-            </div>
-            <div class="mb-4">
-              <label class="block text-sm font-medium text-gray-700 mb-1">মোবাইল নম্বর *</label>
-              <input type="tel" id="signupPhone" class="form-input w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#1e40af] transition" placeholder="+880 1712-345678" value="+880" />
-              <div id="signupPhoneError" class="error-msg">সঠিক ফোন নম্বর দিন (যেমন: +8801712345678)</div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">ইমেইল *</label>
+              <input type="email" id="signupEmail" class="form-input w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#1e40af] transition" placeholder="আপনার ইমেইল" />
+              <div id="signupEmailError" class="error-msg">সঠিক ইমেইল দিন</div>
             </div>
             <div class="mb-4">
               <label class="block text-sm font-medium text-gray-700 mb-1">পাসওয়ার্ড *</label>
@@ -251,7 +241,7 @@
 </div>
 
 <!-- ===================================================== -->
-<!-- ===== FIREBASE AUTH SCRIPT (Fully Fixed) ===== -->
+<!-- ===== FIREBASE AUTH SCRIPT (COMPLETE) ===== -->
 <!-- ===================================================== -->
 <script>
   // Firebase Config
@@ -272,21 +262,19 @@
   // ===== DOM REFS =====
   // Sign In
   const signinForm = document.getElementById('signinForm');
-  const signinPhone = document.getElementById('signinPhone');
+  const signinEmail = document.getElementById('signinEmail');
   const signinPassword = document.getElementById('signinPassword');
   const signinBtn = document.getElementById('signinBtn');
   const signinLoading = document.getElementById('signinLoading');
   const signinError = document.getElementById('signinError');
   const signinSuccess = document.getElementById('signinSuccess');
-  const signinPhoneError = document.getElementById('signinPhoneError');
+  const signinEmailError = document.getElementById('signinEmailError');
   const signinPasswordError = document.getElementById('signinPasswordError');
 
   // Sign Up
   const signupForm = document.getElementById('signupForm');
   const signupName = document.getElementById('signupName');
-  const signupNid = document.getElementById('signupNid');
-  const signupDob = document.getElementById('signupDob');
-  const signupPhone = document.getElementById('signupPhone');
+  const signupEmail = document.getElementById('signupEmail');
   const signupPassword = document.getElementById('signupPassword');
   const signupConfirm = document.getElementById('signupConfirmPassword');
   const signupBtn = document.getElementById('signupBtn');
@@ -294,9 +282,7 @@
   const signupError = document.getElementById('signupError');
   const signupSuccess = document.getElementById('signupSuccess');
   const signupNameError = document.getElementById('signupNameError');
-  const signupNidError = document.getElementById('signupNidError');
-  const signupDobError = document.getElementById('signupDobError');
-  const signupPhoneError = document.getElementById('signupPhoneError');
+  const signupEmailError = document.getElementById('signupEmailError');
   const signupPasswordError = document.getElementById('signupPasswordError');
   const signupConfirmError = document.getElementById('signupConfirmError');
 
@@ -362,8 +348,8 @@
     if (user) {
       userInfo.classList.remove('hidden');
       authForm.style.display = 'none';
-      userName.textContent = user.displayName || user.phoneNumber || 'ব্যবহারকারী';
-      userEmail.textContent = user.email || user.phoneNumber || '';
+      userName.textContent = user.displayName || 'ব্যবহারকারী';
+      userEmail.textContent = user.email || '';
       userPhoto.src = user.photoURL || 'https://ui-avatars.com/api/?name=' + (user.displayName || 'User') + '&background=1e40af&color=fff&size=80';
     } else {
       userInfo.classList.add('hidden');
@@ -375,18 +361,18 @@
     updateUI(user);
   });
 
-  // ===== SIGN IN (Phone + Password) =====
+  // ===== SIGN IN =====
   signinForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const phone = signinPhone.value.trim();
+    const email = signinEmail.value.trim();
     const password = signinPassword.value;
 
     let valid = true;
-    if (!phone || !phone.startsWith('+') || phone.replace(/[^0-9]/g, '').length < 10) {
-      showError(signinPhoneError, 'সঠিক ফোন নম্বর দিন (যেমন: +8801712345678)');
+    if (!email || !email.includes('@')) {
+      showError(signinEmailError, 'সঠিক ইমেইল দিন');
       valid = false;
     } else {
-      signinPhoneError.classList.remove('show');
+      signinEmailError.classList.remove('show');
     }
     if (!password || password.length < 6) {
       showError(signinPasswordError, 'পাসওয়ার্ড দিন');
@@ -400,9 +386,6 @@
     signinBtn.disabled = true;
     signinBtn.style.opacity = '0.6';
 
-    const phoneClean = phone.replace(/[^0-9]/g, '');
-    const email = phoneClean + '@phone.auth';
-
     try {
       await auth.signInWithEmailAndPassword(email, password);
       showSuccess(signinSuccess, 'লগইন সফল!');
@@ -415,28 +398,25 @@
       signinBtn.disabled = false;
       signinBtn.style.opacity = '1';
       console.error('Sign in error:', error);
-      let msg = 'লগইন ব্যর্থ হয়েছে। ফোন নম্বর বা পাসওয়ার্ড ভুল।';
+      let msg = 'লগইন ব্যর্থ হয়েছে। ইমেইল বা পাসওয়ার্ড ভুল।';
       if (error.code === 'auth/user-not-found') {
-        msg = 'এই ফোন নম্বরটি নিবন্ধিত নেই। দয়া করে সাইন আপ করুন।';
+        msg = 'এই ইমেইলটি নিবন্ধিত নেই। দয়া করে সাইন আপ করুন।';
       } else if (error.code === 'auth/wrong-password') {
         msg = 'পাসওয়ার্ড ভুল।';
       } else if (error.code === 'auth/too-many-requests') {
         msg = 'অনেক বেশি চেষ্টা করেছেন। কিছুক্ষণ পর আবার চেষ্টা করুন।';
       } else if (error.code === 'auth/invalid-email') {
-        msg = 'ফোন নম্বরটি সঠিক নয়।';
+        msg = 'ইমেইলটি সঠিক নয়।';
       }
       showError(signinError, msg);
     }
   });
 
-  // ===== SIGN UP (Fixed with better error handling) =====
+  // ===== SIGN UP =====
   signupForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-
     const name = signupName.value.trim();
-    const nid = signupNid.value.trim();
-    const dob = signupDob.value;
-    const phone = signupPhone.value.trim();
+    const email = signupEmail.value.trim();
     const password = signupPassword.value;
     const confirm = signupConfirm.value;
 
@@ -448,23 +428,11 @@
     } else {
       signupNameError.classList.remove('show');
     }
-    if (!nid || !/^\d{10}$/.test(nid)) {
-      showError(signupNidError, 'সঠিক ১০ অঙ্কের NID নম্বর দিন');
+    if (!email || !email.includes('@')) {
+      showError(signupEmailError, 'সঠিক ইমেইল দিন');
       valid = false;
     } else {
-      signupNidError.classList.remove('show');
-    }
-    if (!dob) {
-      showError(signupDobError, 'আপনার জন্ম তারিখ নির্বাচন করুন');
-      valid = false;
-    } else {
-      signupDobError.classList.remove('show');
-    }
-    if (!phone || !phone.startsWith('+') || phone.replace(/[^0-9]/g, '').length < 10) {
-      showError(signupPhoneError, 'সঠিক ফোন নম্বর দিন (যেমন: +8801712345678)');
-      valid = false;
-    } else {
-      signupPhoneError.classList.remove('show');
+      signupEmailError.classList.remove('show');
     }
     if (!password || password.length < 8) {
       showError(signupPasswordError, 'পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে');
@@ -484,49 +452,44 @@
     signupBtn.disabled = true;
     signupBtn.style.opacity = '0.6';
 
-    const phoneClean = phone.replace(/[^0-9]/g, '');
-    const email = phoneClean + '@phone.auth';
-
     try {
-      // 1. Create user with email/password
       const userCred = await auth.createUserWithEmailAndPassword(email, password);
       const user = userCred.user;
-
-      // 2. Update display name
       await user.updateProfile({ displayName: name });
 
-      // 3. Save user data to Firestore
+      // ইমেইল ভেরিফিকেশন পাঠান (ঐচ্ছিক)
+      await user.sendEmailVerification();
+
+      // Firestore-এ ইউজার ডেটা সংরক্ষণ
       await db.collection('users').doc(user.uid).set({
         name: name,
-        nid: nid,
-        dob: dob,
-        phone: phone,
         email: email,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        createdAt: new Date().toISOString(),
+        emailVerified: false
       });
 
-      showSuccess(signupSuccess, 'অ্যাকাউন্ট তৈরি সফল!');
+      showSuccess(signupSuccess, 'অ্যাকাউন্ট তৈরি সফল! আপনার ইমেইলে ভেরিফিকেশন লিংক পাঠানো হয়েছে।');
       setLoading(signupLoading, false);
       signupBtn.disabled = false;
       signupBtn.style.opacity = '1';
-      setTimeout(() => window.location.href = 'admin.html', 1000);
+      // লগইন অবস্থা আপডেট হবে onAuthStateChanged-এ, তাই রিডাইরেক্ট করছি না
+      // ইউজার ভেরিফিকেশন শেষে অ্যাডমিন প্যানেলে যেতে পারে
     } catch (error) {
       setLoading(signupLoading, false);
       signupBtn.disabled = false;
       signupBtn.style.opacity = '1';
       console.error('Sign up error:', error);
-      
       let msg = 'অ্যাকাউন্ট তৈরি ব্যর্থ হয়েছে। আবার চেষ্টা করুন।';
       if (error.code === 'auth/email-already-in-use') {
-        msg = 'এই ফোন নম্বরটি ইতিমধ্যে নিবন্ধিত। দয়া করে সাইন ইন করুন।';
+        msg = 'এই ইমেইলটি ইতিমধ্যে নিবন্ধিত। দয়া করে সাইন ইন করুন।';
       } else if (error.code === 'auth/weak-password') {
         msg = 'পাসওয়ার্ড দুর্বল। আরও শক্তিশালী পাসওয়ার্ড দিন।';
       } else if (error.code === 'auth/invalid-email') {
-        msg = 'ফোন নম্বরটি সঠিক নয়।';
-      } else if (error.code === 'auth/operation-not-allowed') {
-        msg = 'Email/Password সক্রিয় নেই। Firebase কনসোলে চেক করুন।';
+        msg = 'ইমেইলটি সঠিক নয়।';
       } else if (error.code === 'auth/network-request-failed') {
         msg = 'নেটওয়ার্ক সমস্যা। ইন্টারনেট সংযোগ চেক করুন।';
+      } else if (error.code === 'auth/operation-not-allowed') {
+        msg = 'Email/Password সক্রিয় নেই। Firebase কনসোলে চেক করুন।';
       }
       showError(signupError, msg);
     }
@@ -564,15 +527,11 @@
   logoutBtn.addEventListener('click', async () => {
     try {
       await auth.signOut();
+      // UI updated by onAuthStateChanged
     } catch (error) {
       console.error('Logout error:', error);
     }
   });
-
-  // ===== AUTO REDIRECT (optional) =====
-  // auth.onAuthStateChanged(user => {
-  //   if (user) window.location.href = 'admin.html';
-  // });
 </script>
 
 </body>
