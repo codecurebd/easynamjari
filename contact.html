@@ -138,6 +138,12 @@
 
   <!-- Scripts -->
   <script type="module">
+
+    // auth state listener (অন্য সব পেজেও যোগ করুন)
+firebase.auth().onAuthStateChanged((user) => {
+  updateAuthUI(user);   // <-- এই লাইন
+});
+
     import { loadAllComponents } from './components.js';
     import { showToast } from './main.js';
 
