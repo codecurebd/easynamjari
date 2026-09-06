@@ -173,8 +173,12 @@
   <!-- ===== SCRIPTS ===== -->
   <!-- ===================================================== -->
   <script type="module">
-    import { loadAllComponents } from './components.js';
+    // শুধু ফুটার ও ফ্লোটিং বাটন লোড করি (নেভবার লাগবে না)
+    import { loadFooter, loadFloatingButtons } from './components.js';
     import { showToast } from './main.js';
+
+    loadFooter();
+    loadFloatingButtons();
 
     // Firebase Config
     const firebaseConfig = {
@@ -189,12 +193,6 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
-
-    // Load components (navbar, footer, floating buttons)
-    // For admin page, we don't want the standard navbar, we have sidebar
-    // So we only load footer and floating buttons
-    // We'll handle navbar separately
-    loadAllComponents('admin');
 
     // DOM refs
     const sidebar = document.getElementById('sidebar');
@@ -272,14 +270,6 @@
         this.classList.add('active');
       });
     });
-
-    // Hide the default navbar's login button since we are in admin panel
-    // This will be handled by components.js but we can add a small fix
-    // After components are loaded, hide the login button
-    setTimeout(() => {
-      const loginBtn = document.querySelector('a[href="auth.html"]');
-      if (loginBtn) loginBtn.style.display = 'none';
-    }, 100);
   </script>
 
 </body>

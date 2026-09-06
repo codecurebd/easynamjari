@@ -1,15 +1,8 @@
 // main.js
 // ============================================
-// এই ফাইলটি সাইটের সব পেজে ব্যবহারযোগ্য সাধারণ ফাংশন, 
+// এই ফাইলটি সাইটের সব পেজে ব্যবহারযোগ্য সাধারণ ফাংশন,
 // ইউটিলিটি, ভ্যালিডেশন, নোটিফিকেশন, রাউটিং ইত্যাদি ধারণ করে।
-// ব্যবহার: প্রতিটি HTML পেজে <script type="module"> এর ভেতর 
-// import { ... } from './main.js';
 // ============================================
-
-import { loadPage, getCurrentPage, navigateTo } from './components.js';
-
-// Re-export for convenience
-export { navigateTo };
 
 /**
  * ===== ইউটিলিটি ফাংশন =====
@@ -132,9 +125,9 @@ export function hideLoading(containerId) {
   if (spinner) spinner.remove();
 }
 
-// পেজ রিডাইরেক্ট (এখন SPA সাপোর্ট)
+// পেজ রিডাইরেক্ট (সাধারণ HTML পেজে)
 export function redirectTo(page) {
-  navigateTo(page);
+  window.location.href = page + '.html';
 }
 
 // স্ক্রল টু টপ
@@ -380,63 +373,14 @@ export function updateAuthUI(user) {
   const profileLink = document.querySelector('a[href="profile.html"]');
   
   if (user) {
-    // লগইন করা অবস্থা
     if (loginBtn) {
       loginBtn.innerHTML = `<i class="fas fa-user-circle"></i> <span class="hidden xs:inline">${user.displayName || 'প্রোফাইল'}</span>`;
       loginBtn.href = 'profile.html';
     }
   } else {
-    // লগআউট অবস্থা
     if (loginBtn) {
       loginBtn.innerHTML = `<i class="fas fa-sign-in-alt"></i> <span class="hidden xs:inline">লগইন</span>`;
       loginBtn.href = 'auth.html';
     }
   }
 }
-
-
-/**
- * ===== এক্সপোর্ট ডিফল্ট =====
- */
-
-export default {
-  // Utilities
-  isValidPhone,
-  isValidEmail,
-  isValidName,
-  isValidPassword,
-  formatPhone,
-  formatDate,
-  getCurrentDate,
-  isEmpty,
-  generateId,
-
-  // UI
-  showToast,
-  showLoading,
-  hideLoading,
-  redirectTo,
-  scrollToTop,
-
-  // Form
-  showFieldError,
-  hideFieldError,
-  clearForm,
-
-  // Database
-  saveContactMessage,
-  saveApplication,
-  getApplications,
-
-  // Auth
-  isUserAdmin,
-  requireAuth,
-  requireAdmin,
-  updateAuthUI,
-
-  // Contact Form Setup
-  setupContactForm,
-
-  // Routing (re-export)
-  navigateTo
-};
