@@ -9,6 +9,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Firebase Compat -->
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
   <style>
     body { font-family: 'Inter', sans-serif; background: #f1f5f9; }
     .sidebar { background: #0b2b4a; color: white; width: 260px; height: 100vh; position: fixed; top: 0; left: 0; z-index: 100; overflow-y: auto; transition: transform 0.3s; transform: translateX(-100%); }
@@ -67,13 +73,13 @@
     </div>
   </nav>
 
-  <!-- ===== ACCESS DENIED (non-admin) ===== -->
+  <!-- ===== ACCESS DENIED (non-admin) - Redirect to profile ===== -->
   <div id="accessDenied" class="bg-white rounded-3xl shadow-xl p-12 text-center border border-gray-200 hidden">
     <i class="fas fa-lock text-6xl text-red-500 mb-4"></i>
     <h2 class="text-2xl font-bold text-[#0b2b4a]">অ্যাক্সেস অস্বীকৃত</h2>
     <p class="text-gray-600 mt-2">আপনার এই পৃষ্ঠাটি দেখার অনুমতি নেই। শুধুমাত্র অ্যাডমিন ইউজাররা প্রবেশ করতে পারেন।</p>
-    <a href="index.html" class="inline-block mt-6 bg-[#0b2b4a] text-white px-6 py-3 rounded-xl hover:bg-[#1e40af] transition">
-      <i class="fas fa-arrow-left"></i> হোম পেজে যান
+    <a href="profile.html" class="inline-block mt-6 bg-[#0b2b4a] text-white px-6 py-3 rounded-xl hover:bg-[#1e40af] transition">
+      <i class="fas fa-arrow-left"></i> প্রোফাইল পেজে যান
     </a>
   </div>
 
@@ -166,9 +172,22 @@
   <a href="https://wa.me/8801350141762" class="floating-btn bg-green-500 text-white p-4 rounded-full shadow-2xl hover:bg-green-600 transition flex items-center justify-center w-14 h-14"><i class="fab fa-whatsapp text-2xl"></i></a>
 </div>
 
+<!-- ===================================================== -->
 <!-- ===== FIREBASE SCRIPT ===== -->
-<script type="module">
-  import { auth, onAuthStateChanged, signOut } from './firebase-config.js';
+<!-- ===================================================== -->
+<script>
+  // Firebase Config
+  const firebaseConfig = {
+    apiKey: "AIzaSyBOpiCSVD8O-uT4CR4_-e9kGpZ1uVHFG54",
+    authDomain: "easy-namjari.firebaseapp.com",
+    projectId: "easy-namjari",
+    storageBucket: "easy-namjari.firebasestorage.app",
+    messagingSenderId: "686038387625",
+    appId: "1:686038387625:web:2a8eebba1b771844fcd2b8"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
 
   // DOM refs
   const sidebar = document.getElementById('sidebar');
@@ -187,11 +206,11 @@
     }
   });
 
-  // --- CHECK ADMIN ROLE ---
+  // --- CHECK ADMIN ROLE & REDIRECT NON-ADMIN TO PROFILE ---
   async function checkAdmin(user) {
     if (!user) {
-      accessDenied.classList.remove('hidden');
-      adminContent.classList.add('hidden');
+      // Not logged in → redirect to auth page
+      window.location.href = 'auth.html';
       return;
     }
 
@@ -200,34 +219,41 @@
       const isAdmin = tokenResult.claims.admin === true;
 
       if (isAdmin) {
+        // Admin: show panel
         adminContent.classList.remove('hidden');
         accessDenied.classList.add('hidden');
         adminName.textContent = user.displayName || 'অ্যাডমিন';
         adminAvatar.textContent = (user.displayName || 'A').charAt(0).toUpperCase();
       } else {
-        accessDenied.classList.remove('hidden');
-        adminContent.classList.add('hidden');
+        // Non-admin: redirect to profile page (instead of showing access denied)
+        window.location.href = 'profile.html';
       }
     } catch (error) {
       console.error('Error checking admin role:', error);
-      accessDenied.classList.remove('hidden');
-      adminContent.classList.add('hidden');
+      // On error, redirect to profile as fallback
+      window.location.href = 'profile.html';
     }
   }
 
   // --- AUTH STATE LISTENER ---
-  onAuthStateChanged(auth, (user) => {
+  auth.onAuthStateChanged((user) => {
     if (user) {
       checkAdmin(user);
     } else {
+      // Not logged in: go to auth
       window.location.href = 'auth.html';
     }
   });
 
   // --- LOGOUT ---
   logoutBtn.addEventListener('click', async () => {
-    await signOut(auth);
-    window.location.href = 'auth.html';
+    try {
+      await auth.signOut();
+      window.location.href = 'auth.html';
+    } catch (error) {
+      console.error('Logout error:', error);
+      alert('লগআউট ব্যর্থ হয়েছে। আবার চেষ্টা করুন।');
+    }
   });
 
   // --- SIDEBAR ACTIVE LINK ---

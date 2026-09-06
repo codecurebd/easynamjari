@@ -8,7 +8,7 @@
 
 /**
  * নেভবার লোড করে
- * @param {string} currentPage - বর্তমান পেজের নাম (যেমন: 'index', 'contact', 'auth', 'admin')
+ * @param {string} currentPage - বর্তমান পেজের নাম (যেমন: 'index', 'contact', 'auth', 'profile', 'admin')
  */
 export function loadNavbar(currentPage = 'index') {
   const navbarHTML = `
@@ -20,7 +20,7 @@ export function loadNavbar(currentPage = 'index') {
         </a>
         <div class="flex items-center gap-3 sm:gap-6 text-sm sm:text-lg flex-wrap">
           <a href="index.html" class="nav-link text-gray-700 font-medium ${currentPage === 'index' ? 'text-[#1e40af]' : ''}">হোম</a>
-          <a href="index.html#services" class="nav-link text-gray-700 font-medium">সেবা</a>
+          <a href="profile.html" class="nav-link text-gray-700 font-medium ${currentPage === 'profile' ? 'text-[#1e40af]' : ''}">প্রোফাইল</a>
           <a href="contact.html" class="nav-link text-gray-700 font-medium ${currentPage === 'contact' ? 'text-[#1e40af]' : ''}">যোগাযোগ</a>
           <a href="auth.html" class="bg-[#0b2b4a] text-white px-4 sm:px-7 py-2 sm:py-3 rounded-2xl font-semibold flex items-center gap-1 sm:gap-2 hover:bg-[#1e40af] transition text-sm sm:text-base">
             <i class="fas fa-sign-in-alt"></i> <span class="hidden xs:inline">লগইন</span>
@@ -72,7 +72,7 @@ export function loadFooter() {
             <h4 class="text-lg sm:text-xl font-bold mb-3 sm:mb-4">দ্রুত লিংক</h4>
             <ul class="space-y-2 text-sm sm:text-base">
               <li><a href="index.html" class="text-gray-400 hover:text-white transition">হোম</a></li>
-              <li><a href="auth.html" class="text-gray-400 hover:text-white transition">লগইন</a></li>
+              <li><a href="profile.html" class="text-gray-400 hover:text-white transition">প্রোফাইল</a></li>
               <li><a href="contact.html" class="text-gray-400 hover:text-white transition">যোগাযোগ</a></li>
             </ul>
           </div>
