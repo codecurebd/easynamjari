@@ -234,3 +234,17 @@ export const getCurrentUser = () => {
     }, reject);
   });
 };
+
+// মেইন.js-এর শেষে যোগ করুন (যদি না থাকে)
+export function updateAuthUI(user = null) {
+  const btn = document.getElementById('authBtn');
+  if (!btn) return;
+
+  if (user) {
+    btn.innerHTML = `<i class="fas fa-user-circle"></i> <span class="hidden xs:inline">প্রোফাইল</span>`;
+    btn.href = 'profile.html';
+  } else {
+    btn.innerHTML = `<i class="fas fa-sign-in-alt"></i> <span class="hidden xs:inline">লগইন</span>`;
+    btn.href = 'auth.html';
+  }
+}

@@ -1,11 +1,11 @@
 // components.js
 // ============================================
-// সব পেজে নেভবার + ফুটার + ফ্লোটিং বাটন ১০০% কাজ করবে + লগইন বাটন সঠিক দেখাবে
+// পারফেক্ট নেভবার + ফুটার + ফ্লোটিং বাটন (লগইন স্টেট সঠিক দেখাবে)
 // ============================================
 
 console.log('✅ components.js লোড হয়েছে!');
 
-// ====================== NAVBAR ======================
+// ====================== NAVBAR (লগইন স্টেট অনুযায়ী) ======================
 export function loadNavbar(currentPage = 'index') {
   console.log('✅ loadNavbar চলছে, currentPage:', currentPage);
   
@@ -36,7 +36,7 @@ export function loadNavbar(currentPage = 'index') {
     document.body.insertAdjacentHTML('afterbegin', navbarHTML);
   }
 
-  // ====================== লগইন বাটন আপডেট (সবচেয়ে গুরুত্বপূর্ণ) ======================
+  // লগইন বাটন আপডেট (সবচেয়ে গুরুত্বপূর্ণ)
   window.updateAuthUI = function(user = null) {
     const btn = document.getElementById('authBtn');
     if (!btn) return;
@@ -50,8 +50,7 @@ export function loadNavbar(currentPage = 'index') {
     }
   };
 
-  // প্রথমবার চালু করা (আগে থেকে লগইন থাকলেও কাজ করবে)
-  window.updateAuthUI();
+  window.updateAuthUI(); // প্রথমবার চালু
 }
 
 // ====================== FOOTER ======================
@@ -133,7 +132,7 @@ export function loadFloatingButtons() {
   }
 }
 
-// ====================== সব কম্পোনেন্ট লোড ======================
+// ====================== সব কম্পোনেন্ট ======================
 export function loadAllComponents(currentPage = 'index') {
   console.log('✅ loadAllComponents চলছে, currentPage:', currentPage);
   loadNavbar(currentPage);
