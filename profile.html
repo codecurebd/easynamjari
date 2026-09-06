@@ -19,7 +19,7 @@
     body { font-family: 'Inter', sans-serif; background: #f8fafc; }
     .profile-card { transition: all 0.3s ease; }
     .profile-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -12px rgba(0,0,0,0.1); }
-    .info-item { border-bottom: 1px solid #e2e8f0; padding: 12px 0; display: flex; justify-content: space-between; align-items: center; }
+    .info-item { border-bottom: 1px solid #e2e8f0; padding: 12px 0; display: flex; justify-between align-items: center; }
     .info-item:last-child { border-bottom: none; }
     .info-label { font-weight: 500; color: #475569; }
     .info-value { font-weight: 600; color: #0b2b4a; }
@@ -29,14 +29,19 @@
 </head>
 <body>
 
+  <!-- Navbar -->
+  <script type="module">
+    import { loadNavbar } from './components.js';
+    loadNavbar('profile');
+  </script>
+
   <!-- ===== PAGE CONTENT (SPA) ===== -->
   <div id="page-content">
 
-    <!-- ===== Profile Section ===== -->
     <section class="py-12 sm:py-20 bg-gray-50">
       <div class="container mx-auto px-4 sm:px-6 max-w-3xl">
 
-        <!-- Loading state -->
+        <!-- Loading -->
         <div id="loadingState" class="text-center py-12">
           <i class="fas fa-spinner fa-spin text-4xl text-[#1e40af]"></i>
           <p class="text-gray-600 mt-4">প্রোফাইল লোড হচ্ছে...</p>
@@ -45,7 +50,6 @@
         <!-- Profile Card -->
         <div id="profileCard" class="hidden bg-white rounded-3xl shadow-xl p-6 sm:p-10 border border-gray-200 profile-card">
           
-          <!-- Avatar & Name -->
           <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 mb-6">
             <img id="userAvatar" src="" alt="প্রোফাইল ছবি" class="avatar" />
             <div class="flex-1 text-center sm:text-left">
@@ -58,7 +62,6 @@
             </div>
           </div>
 
-          <!-- User Info Grid (No "অ্যাকাউন্ট টাইপ" row) -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
             <div class="info-item">
               <span class="info-label"><i class="fas fa-id-card mr-2"></i>NID</span>
@@ -78,7 +81,6 @@
             </div>
           </div>
 
-          <!-- Actions -->
           <div class="mt-8 flex flex-wrap gap-4 justify-center sm:justify-start">
             <a id="adminPanelLink" href="admin.html" class="hidden bg-[#0b2b4a] text-white px-6 py-3 rounded-xl font-semibold hover:bg-[#1e40af] transition shadow-md flex items-center gap-2">
               <i class="fas fa-cog"></i> অ্যাডমিন প্যানেল
@@ -89,7 +91,7 @@
           </div>
         </div>
 
-        <!-- Unauthorized / Not logged in -->
+        <!-- Unauthorized -->
         <div id="unauthorizedState" class="hidden bg-white rounded-3xl shadow-xl p-12 text-center border border-gray-200">
           <i class="fas fa-lock text-6xl text-red-500 mb-4"></i>
           <h2 class="text-2xl font-bold text-[#0b2b4a]">অনুগ্রহ করে লগইন করুন</h2>
@@ -102,16 +104,15 @@
       </div>
     </section>
 
-  </div> <!-- end page-content -->
+  </div>
 
-  <!-- ===================================================== -->
-  <!-- ===== SCRIPTS ===== -->
-  <!-- ===================================================== -->
+  <!-- Scripts -->
   <script type="module">
     import { loadAllComponents } from './components.js';
     import { showToast } from './main.js';
 
-    // Firebase Config
+    loadAllComponents('profile');
+
     const firebaseConfig = {
       apiKey: "AIzaSyBOpiCSVD8O-uT4CR4_-e9kGpZ1uVHFG54",
       authDomain: "easy-namjari.firebaseapp.com",
@@ -125,7 +126,6 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    // DOM refs
     const loadingState = document.getElementById('loadingState');
     const profileCard = document.getElementById('profileCard');
     const unauthorizedState = document.getElementById('unauthorizedState');
@@ -140,13 +140,8 @@
     const userEmail = document.getElementById('userEmail');
     const adminBadge = document.getElementById('adminBadge');
     const adminPanelLink = document.getElementById('adminPanelLink');
-
     const logoutProfileBtn = document.getElementById('logoutProfileBtn');
 
-    // লোড কম্পোনেন্ট (নেভবার, ফুটার, ফ্লোটিং বাটন)
-    loadAllComponents('profile');
-
-    // ===== Fetch and display profile =====
     async function loadProfile(user) {
       if (!user) {
         loadingState.classList.add('hidden');
@@ -154,29 +149,20 @@
         return;
       }
 
-      loadingState.classList.remove('hidden');
+      loadingState.classList.add('hidden');
       profileCard.classList.add('hidden');
       unauthorizedState.classList.add('hidden');
 
       try {
-        const displayName = user.displayName || 'ব্যবহারকারী';
-        const photoURL = user.photoURL || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(displayName) + '&background=1e40af&color=fff&size=100';
+        const displayName = user.displayName || 'ব্যবর্তীকারী';
+        const photoURL = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=1e40af&color=fff&size=100`;
         const email = user.email || 'ইমেইল নেই';
 
-        // Get extra data from Firestore
         const docRef = db.collection('users').doc(user.uid);
         const docSnap = await docRef.get();
-        let userData = {};
-        if (docSnap.exists) {
-          userData = docSnap.data();
-        }
+        const userData = docSnap.exists ? docSnap.data() : {};
 
-        // Check admin status from Firestore (userType === 'admin')
-        const isAdmin = userData.userType === 'admin';
-
-        // Populate UI
         userAvatar.src = photoURL;
-        userAvatar.alt = displayName;
         userDisplayName.textContent = displayName;
         userEmailDisplay.textContent = email;
         userEmail.textContent = email;
@@ -188,44 +174,27 @@
         userNid.textContent = userData.nid || '—';
         userDob.textContent = userData.dob ? new Date(userData.dob).toLocaleDateString('bn-BD') : '—';
 
-        // Admin badge & panel link (only if admin)
-        if (isAdmin) {
+        if (userData.userType === 'admin') {
           adminBadge.classList.remove('hidden');
           adminPanelLink.classList.remove('hidden');
-        } else {
-          adminBadge.classList.add('hidden');
-          adminPanelLink.classList.add('hidden');
         }
 
-        loadingState.classList.add('hidden');
         profileCard.classList.remove('hidden');
-
       } catch (error) {
-        console.error('Error loading profile:', error);
+        console.error(error);
         loadingState.classList.add('hidden');
         unauthorizedState.classList.remove('hidden');
         showToast('প্রোফাইল লোড করতে ব্যর্থ হয়েছে', 'error');
       }
     }
 
-    // ===== Auth state listener =====
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        loadProfile(user);
-      } else {
-        loadingState.classList.add('hidden');
-        profileCard.classList.add('hidden');
-        unauthorizedState.classList.remove('hidden');
-      }
-    });
+    auth.onAuthStateChanged(loadProfile);
 
-    // ===== Logout =====
     async function handleLogout() {
       try {
         await auth.signOut();
         window.location.href = 'auth.html';
       } catch (error) {
-        console.error('Logout error:', error);
         showToast('লগআউট ব্যর্থ হয়েছে', 'error');
       }
     }

@@ -7,8 +7,8 @@
 console.log('✅ components.js লোড হয়েছে!');
 
 /**
- * ===== নেভবার লোড =====
- * @param {string} currentPage - বর্তমান পেজের নাম (শুধু অ্যাক্টিভ লিংক হাইলাইটের জন্য)
+ * ===== নেভবার লোড (UPGRADED) =====
+ * @param {string} currentPage - বর্তমান পেজের নাম
  */
 export function loadNavbar(currentPage = 'index') {
   console.log('✅ loadNavbar চলছে, currentPage:', currentPage);
@@ -20,28 +20,48 @@ export function loadNavbar(currentPage = 'index') {
           <img src="https://res.cloudinary.com/zmoyykj7/image/upload/v1788432073/v2am9blsmmmcul9nycyz.png" alt="ইজি নামজারি" class="h-9 sm:h-11" />
           <span class="text-xl sm:text-3xl font-bold text-[#0b2b4a]">Easy <span class="text-[#1e40af]">Namjari</span></span>
         </a>
-        <div class="flex items-center gap-3 sm:gap-6 text-sm sm:text-lg flex-wrap">
+
+        <!-- Desktop Menu -->
+        <div class="hidden md:flex items-center gap-3 sm:gap-6 text-sm sm:text-lg">
           <a href="index.html" class="nav-link text-gray-700 font-medium ${currentPage === 'index' ? 'text-[#1e40af]' : ''}">হোম</a>
           <a href="profile.html" class="nav-link text-gray-700 font-medium ${currentPage === 'profile' ? 'text-[#1e40af]' : ''}">প্রোফাইল</a>
           <a href="contact.html" class="nav-link text-gray-700 font-medium ${currentPage === 'contact' ? 'text-[#1e40af]' : ''}">যোগাযোগ</a>
-          <a href="auth.html" class="bg-[#0b2b4a] text-white px-4 sm:px-7 py-2 sm:py-3 rounded-2xl font-semibold flex items-center gap-1 sm:gap-2 hover:bg-[#1e40af] transition text-sm sm:text-base">
-            <i class="fas fa-sign-in-alt"></i> <span class="hidden xs:inline">লগইন</span>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <a href="auth.html" id="authLink" 
+             class="bg-[#0b2b4a] text-white px-4 sm:px-7 py-2 sm:py-3 rounded-2xl font-semibold flex items-center gap-1 sm:gap-2 hover:bg-[#1e40af] transition text-sm sm:text-base">
+            <i class="fas fa-sign-in-alt"></i> <span id="authText" class="hidden sm:inline">লগইন</span>
           </a>
+          
+          <a href="admin.html" id="adminLink" 
+             class="hidden bg-[#1e40af] text-white px-4 sm:px-6 py-2 rounded-2xl font-semibold flex items-center gap-1 hover:bg-[#0f172a] transition">
+            <i class="fas fa-cog"></i> অ্যাডমিন প্যানেল
+          </a>
+        </div>
+      </div>
+
+      <!-- Mobile Menu -->
+      <div class="md:hidden bg-white border-t">
+        <div class="px-4 py-3 flex flex-col gap-3 text-base">
+          <a href="index.html" class="py-2">হোম</a>
+          <a href="profile.html" class="py-2">প্রোফাইল</a>
+          <a href="contact.html" class="py-2">যোগাযোগ</a>
+          <a href="auth.html" id="mobileAuth" class="py-2">লগইন</a>
         </div>
       </div>
     </nav>
   `;
 
+  // Remove old navbar and add new one
   const existingNav = document.querySelector('nav.bg-white.shadow-lg');
   if (existingNav) {
     existingNav.outerHTML = navbarHTML;
-    console.log('✅ নেভবার প্রতিস্থাপিত হয়েছে');
   } else {
     document.body.insertAdjacentHTML('afterbegin', navbarHTML);
-    console.log('✅ নতুন নেভবার যোগ করা হয়েছে');
   }
 
-  // নেভবার লিংক অ্যানিমেশন স্টাইল (যদি না থাকে)
+  // Add style if not exists
   if (!document.getElementById('nav-style')) {
     const style = document.createElement('style');
     style.id = 'nav-style';
@@ -50,10 +70,40 @@ export function loadNavbar(currentPage = 'index') {
       .nav-link::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background: #1e40af; transition: width 0.3s ease; }
       .nav-link:hover::after { width: 100%; }
       .nav-link:hover { color: #1e40af; }
-      .nav-link.text-\\[\\#1e40af\\]::after { width: 100%; }
     `;
     document.head.appendChild(style);
   }
+
+  // Update auth button text based on login status
+  const checkAuth = () => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const authLink = document.getElementById('authLink');
+    const authText = document.getElementById('authText');
+    const adminLink = document.getElementById('adminLink');
+
+    if (user) {
+      authText.textContent = 'প্রোফাইল';
+      authLink.href = 'profile.html';
+      authLink.innerHTML = `<i class="fas fa-user-circle"></i> <span class="hidden sm:inline">প্রোফাইল</span>`;
+      
+      // Show admin link if user is admin
+      if (user.userType === 'admin') {
+        adminLink.classList.remove('hidden');
+        adminLink.href = 'admin.html';
+      } else {
+        adminLink.classList.add('hidden');
+      }
+    } else {
+      authText.textContent = 'লগইন';
+      authLink.href = 'auth.html';
+      authLink.innerHTML = `<i class="fas fa-sign-in-alt"></i> <span class="hidden sm:inline">লগইন</span>`;
+      adminLink.classList.add('hidden');
+    }
+  };
+
+  checkAuth();
+  // Listen for storage change (for logout)
+  window.addEventListener('storage', checkAuth);
 }
 
 /**
@@ -96,13 +146,11 @@ export function loadFooter() {
     </footer>
   `;
 
-  const existingFooter = document.querySelector('footer.bg-\\[\\#0b2b4a\\]');
+  const existingFooter = document.querySelector('footer.bg-\\#0b2b4a');
   if (existingFooter) {
     existingFooter.outerHTML = footerHTML;
-    console.log('✅ ফুটার প্রতিস্থাপিত হয়েছে');
   } else {
     document.body.insertAdjacentHTML('beforeend', footerHTML);
-    console.log('✅ নতুন ফুটার যোগ করা হয়েছে');
   }
 }
 
@@ -113,7 +161,7 @@ export function loadFloatingButtons() {
   console.log('✅ loadFloatingButtons চলছে');
   
   const floatingHTML = `
-    <div class="fixed bottom-6 sm:bottom-8 right-4 sm:right-8 flex flex-col gap-3 sm:gap-4 z-50" id="floatingButtons">
+    <div class="fixed bottom-6 sm-bottom-8 right-4 sm:right-8 flex flex-col gap-3 sm:gap-4 z-50" id="floatingButtons">
       <a href="tel:01350141762" class="floating-btn bg-[#0b2b4a] text-white p-3 sm:p-4 rounded-full shadow-2xl hover:bg-[#1e40af] transition flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16">
         <i class="fas fa-phone text-2xl sm:text-3xl"></i>
       </a>
@@ -143,7 +191,6 @@ export function loadFloatingButtons() {
 
 /**
  * ===== সব কম্পোনেন্ট লোড =====
- * @param {string} currentPage - বর্তমান পেজের নাম
  */
 export function loadAllComponents(currentPage = 'index') {
   console.log('✅ loadAllComponents চলছে, currentPage:', currentPage);

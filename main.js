@@ -58,7 +58,6 @@ export function generateId() {
   return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
 }
 
-
 /**
  * ===== UI ফাংশন =====
  */
@@ -102,39 +101,40 @@ export function showToast(message, type = 'success', duration = 4000) {
   }, duration);
 }
 
-// লোডিং স্পিনার
-export function showLoading(containerId) {
-  const container = document.getElementById(containerId);
-  if (!container) return;
-  const existing = container.querySelector('.custom-spinner');
-  if (existing) existing.remove();
+/**
+ * ===== অথেনটিকেশন ফাংশন =====
+ */
 
-  const spinner = document.createElement('div');
-  spinner.className = 'custom-spinner flex justify-center items-center py-8';
-  spinner.innerHTML = `
-    <div class="w-10 h-10 border-4 border-[#1e40af] border-t-transparent rounded-full animate-spin"></div>
-    <span class="ml-3 text-gray-600 font-medium">লোড হচ্ছে...</span>
-  `;
-  container.appendChild(spinner);
+export async function isUserAdmin(user) {
+  if (!user) return false;
+  try {
+    const tokenResult = await user.getIdTokenResult();
+    return tokenResult.claims.admin === true;
+  } catch (error) {
+    console.error('Error checking admin:', error);
+    return false;
+  }
 }
 
-export function hideLoading(containerId) {
-  const container = document.getElementById(containerId);
-  if (!container) return;
-  const spinner = container.querySelector('.custom-spinner');
-  if (spinner) spinner.remove();
-}
+export async function requireAdmin(auth, onAuthStateChanged) {
+  return new Promise((resolve) => {
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = 'auth.html';
+        resolve(false);
+        return;
+      }
 
-// পেজ রিডাইরেক্ট (সাধারণ HTML পেজে)
-export function redirectTo(page) {
-  window.location.href = page + '.html';
+      const isAdmin = await isUserAdmin(user);
+      if (!isAdmin) {
+        window.location.href = 'profile.html';
+        resolve(false);
+      } else {
+        resolve(user);
+      }
+    });
+  });
 }
-
-// স্ক্রল টু টপ
-export function scrollToTop() {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
 
 /**
  * ===== ফর্ম ভ্যালিডেশন হেলপার =====
@@ -148,7 +148,6 @@ export function showFieldError(inputId, errorId) {
     input.classList.remove('border-gray-300');
   }
   if (error) {
-    error.classList.remove('hidden');
     error.classList.add('show');
   }
 }
@@ -161,7 +160,6 @@ export function hideFieldError(inputId, errorId) {
     input.classList.add('border-gray-300');
   }
   if (error) {
-    error.classList.add('hidden');
     error.classList.remove('show');
   }
 }
@@ -179,7 +177,6 @@ export function clearForm(formId) {
     el.classList.add('border-gray-300');
   });
 }
-
 
 /**
  * ===== ডেটাবেস / API ফাংশন (Firestore) =====
@@ -228,159 +225,12 @@ export async function getApplications(db, getDocs, collection) {
   }
 }
 
-
-/**
- * ===== অথেনটিকেশন ফাংশন =====
- */
-
-export async function isUserAdmin(user) {
-  if (!user) return false;
-  try {
-    const tokenResult = await user.getIdTokenResult();
-    return tokenResult.claims.admin === true;
-  } catch (error) {
-    console.error('Error checking admin:', error);
-    return false;
-  }
-}
-
-export function requireAuth(auth, onAuthStateChanged, redirectUrl = 'auth.html') {
-  return new Promise((resolve) => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+// Optional: helper to get current user as a Promise
+export const getCurrentUser = () => {
+  return new Promise((resolve, reject) => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
       unsubscribe();
-      if (!user) {
-        window.location.href = redirectUrl;
-      } else {
-        resolve(user);
-      }
-    });
+      resolve(user);
+    }, reject);
   });
-}
-
-export async function requireAdmin(auth, onAuthStateChanged, user) {
-  if (!user) {
-    window.location.href = 'auth.html';
-    return false;
-  }
-  const isAdmin = await isUserAdmin(user);
-  if (!isAdmin) {
-    window.location.href = 'profile.html';
-    return false;
-  }
-  return true;
-}
-
-
-/**
- * ===== কনট্যাক্ট ফর্ম হ্যান্ডলার =====
- */
-
-export function setupContactForm(
-  formId,
-  nameId,
-  phoneId,
-  emailId,
-  messageId,
-  methodName,
-  successMsgId,
-  db,
-  addDoc,
-  collection
-) {
-  const form = document.getElementById(formId);
-  if (!form) return;
-
-  form.addEventListener('submit', async function(e) {
-    e.preventDefault();
-
-    const name = document.getElementById(nameId).value.trim();
-    const phone = document.getElementById(phoneId).value.trim();
-    const email = document.getElementById(emailId).value.trim();
-    const message = document.getElementById(messageId).value.trim();
-    const method = document.querySelector(`input[name="${methodName}"]:checked`)?.value || 'whatsapp';
-
-    let valid = true;
-    if (!isValidName(name)) {
-      showFieldError(nameId, nameId + 'Error');
-      valid = false;
-    } else {
-      hideFieldError(nameId, nameId + 'Error');
-    }
-
-    if (!isValidPhone(phone)) {
-      showFieldError(phoneId, phoneId + 'Error');
-      valid = false;
-    } else {
-      hideFieldError(phoneId, phoneId + 'Error');
-    }
-
-    if (!isEmpty(message) && message.length < 5) {
-      showFieldError(messageId, messageId + 'Error');
-      valid = false;
-    } else {
-      hideFieldError(messageId, messageId + 'Error');
-    }
-
-    if (!valid) return;
-
-    const data = {
-      name,
-      phone: formatPhone(phone),
-      email: email || '',
-      message,
-      preferredMethod: method
-    };
-
-    const submitBtn = form.querySelector('button[type="submit"]');
-    const originalText = submitBtn.innerHTML;
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> পাঠানো হচ্ছে...';
-    submitBtn.disabled = true;
-
-    const result = await saveContactMessage(db, addDoc, collection, data);
-
-    submitBtn.innerHTML = originalText;
-    submitBtn.disabled = false;
-
-    if (result.success) {
-      showToast('আপনার বার্তা সফলভাবে পাঠানো হয়েছে।', 'success');
-      clearForm(formId);
-      const successMsg = document.getElementById(successMsgId);
-      if (successMsg) {
-        successMsg.classList.remove('hidden');
-        setTimeout(() => successMsg.classList.add('hidden'), 5000);
-      }
-    } else {
-      showToast('বার্তা পাঠাতে ব্যর্থ হয়েছে। আবার চেষ্টা করুন।', 'error');
-    }
-  });
-
-  document.getElementById(nameId)?.addEventListener('blur', function() {
-    if (isValidName(this.value)) hideFieldError(nameId, nameId + 'Error');
-  });
-  document.getElementById(phoneId)?.addEventListener('blur', function() {
-    if (isValidPhone(this.value)) hideFieldError(phoneId, phoneId + 'Error');
-  });
-}
-
-
-/**
- * ===== সাইন ইন/আউট হ্যান্ডলার =====
- */
-
-// লগইন অবস্থা অনুযায়ী UI আপডেট করা (navbar-এ প্রোফাইল/লগইন দেখানো)
-export function updateAuthUI(user) {
-  const loginBtn = document.querySelector('a[href="auth.html"]');
-  const profileLink = document.querySelector('a[href="profile.html"]');
-  
-  if (user) {
-    if (loginBtn) {
-      loginBtn.innerHTML = `<i class="fas fa-user-circle"></i> <span class="hidden xs:inline">${user.displayName || 'প্রোফাইল'}</span>`;
-      loginBtn.href = 'profile.html';
-    }
-  } else {
-    if (loginBtn) {
-      loginBtn.innerHTML = `<i class="fas fa-sign-in-alt"></i> <span class="hidden xs:inline">লগইন</span>`;
-      loginBtn.href = 'auth.html';
-    }
-  }
-}
+};

@@ -38,6 +38,12 @@
 </head>
 <body>
 
+  <!-- Navbar -->
+  <script type="module">
+    import { loadNavbar } from './components.js';
+    loadNavbar('admin');
+  </script>
+
   <!-- ===== PAGE CONTENT (SPA) ===== -->
   <div id="page-content">
 
@@ -52,7 +58,7 @@
         <a href="#" class="sidebar-item"><i class="fas fa-file-alt"></i> আবেদনসমূহ <span class="badge">১২</span></a>
         <a href="#" class="sidebar-item"><i class="fas fa-users"></i> ইউজার</a>
         <a href="#" class="sidebar-item"><i class="fas fa-cog"></i> সেটিংস</a>
-        <a href="#" class="sidebar-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> লগআউট</a>
+        <a href="#" id="logoutBtn" class="sidebar-item"><i class="fas fa-sign-out-alt"></i> লগআউট</a>
       </div>
       <div class="absolute bottom-6 left-0 right-0 text-center text-xs text-gray-400">v1.0 | CodeCureBD</div>
     </nav>
@@ -66,7 +72,7 @@
           <button id="sidebarToggle" class="md:hidden bg-[#0b2b4a] text-white p-2 rounded-lg">
             <i class="fas fa-bars text-xl"></i>
           </button>
-          <h1 class="text-2xl font-bold text-[#0b2b4a] hidden sm:block">ড্যাশবোর্ড</h1>
+          <h1 class="text-2xl font-bold text-[#0b2b4a] hidden sm:block">অ্যাডমিন প্যানেল</h1>
         </div>
         <div class="flex items-center gap-4">
           <span id="adminName" class="text-sm text-gray-600 hidden sm:inline"></span>
@@ -74,17 +80,7 @@
         </div>
       </nav>
 
-      <!-- ===== ACCESS DENIED (non-admin) - Redirect to profile ===== -->
-      <div id="accessDenied" class="bg-white rounded-3xl shadow-xl p-12 text-center border border-gray-200 hidden">
-        <i class="fas fa-lock text-6xl text-red-500 mb-4"></i>
-        <h2 class="text-2xl font-bold text-[#0b2b4a]">অ্যাক্সেস অস্বীকৃত</h2>
-        <p class="text-gray-600 mt-2">আপনার এই পৃষ্ঠাটি দেখার অনুমতি নেই। শুধুমাত্র অ্যাডমিন ইউজাররা প্রবেশ করতে পারেন।</p>
-        <a href="profile.html" class="inline-block mt-6 bg-[#0b2b4a] text-white px-6 py-3 rounded-xl hover:bg-[#1e40af] transition">
-          <i class="fas fa-arrow-left"></i> প্রোফাইল পেজে যান
-        </a>
-      </div>
-
-      <!-- ===== ADMIN CONTENT ===== -->
+      <!-- Admin Content -->
       <div id="adminContent" class="hidden">
 
         <!-- Stats -->
@@ -162,25 +158,29 @@
           </div>
         </div>
 
-      </div><!-- end adminContent -->
+      </div>
 
-      <p class="text-center text-sm text-gray-500 mt-8">© 2026 Easy Namjari | Managed by: CodeCureBD</p>
+      <!-- Access Denied -->
+      <div id="accessDenied" class="hidden bg-white rounded-3xl shadow-xl p-12 text-center border border-gray-200">
+        <i class="fas fa-lock text-6xl text-red-500 mb-4"></i>
+        <h2 class="text-2xl font-bold text-[#0b2b4a]">অ্যাক্সেস অস্বীকৃত</h2>
+        <p class="text-gray-600 mt-2">আপনার এই পৃষ্ঠাটি দেখার অনুমতি নেই। শুধুমাত্র অ্যাডমিন ইউজাররা প্রবেশ করতে পারেন।</p>
+        <a href="profile.html" class="inline-block mt-6 bg-[#0b2b4a] text-white px-6 py-3 rounded-xl hover:bg-[#1e40af] transition">
+          <i class="fas fa-arrow-left"></i> প্রোফাইল পেজে যান
+        </a>
+      </div>
+
     </div>
 
-  </div> <!-- end page-content -->
+  </div>
 
-  <!-- ===================================================== -->
-  <!-- ===== SCRIPTS ===== -->
-  <!-- ===================================================== -->
+  <!-- Scripts -->
   <script type="module">
-    // শুধু ফুটার ও ফ্লোটিং বাটন লোড করি (নেভবার লাগবে না)
-    import { loadFooter, loadFloatingButtons } from './components.js';
+    import { loadAllComponents } from './components.js';
     import { showToast } from './main.js';
 
-    loadFooter();
-    loadFloatingButtons();
+    loadAllComponents('admin');
 
-    // Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyBOpiCSVD8O-uT4CR4_-e9kGpZ1uVHFG54",
       authDomain: "easy-namjari.firebaseapp.com",
@@ -194,24 +194,33 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    // DOM refs
     const sidebar = document.getElementById('sidebar');
-    const toggleBtn = document.getElementById('sidebarToggle');
+    const sidebarToggle = document.getElementById('sidebarToggle');
     const adminContent = document.getElementById('adminContent');
     const accessDenied = document.getElementById('accessDenied');
     const adminName = document.getElementById('adminName');
     const adminAvatar = document.getElementById('adminAvatar');
     const logoutBtn = document.getElementById('logoutBtn');
 
-    // --- SIDEBAR TOGGLE ---
-    toggleBtn.addEventListener('click', () => sidebar.classList.toggle('open'));
+    // Sidebar Toggle
+    sidebarToggle.addEventListener('click', () => sidebar.classList.toggle('open'));
     document.addEventListener('click', (e) => {
-      if (window.innerWidth < 768 && !sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+      if (window.innerWidth < 768 && !sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
         sidebar.classList.remove('open');
       }
     });
 
-    // --- CHECK ADMIN ROLE & REDIRECT NON-ADMIN TO PROFILE ---
+    // Logout
+    logoutBtn.addEventListener('click', async () => {
+      try {
+        await auth.signOut();
+        window.location.href = 'auth.html';
+      } catch (error) {
+        showToast('লগআউট ব্যর্থ হয়েছে', 'error');
+      }
+    });
+
+    // Admin Role Check
     async function checkAdmin(user) {
       if (!user) {
         window.location.href = 'auth.html';
@@ -219,14 +228,9 @@
       }
 
       try {
-        // First check Firestore userType
         const docRef = db.collection('users').doc(user.uid);
         const docSnap = await docRef.get();
-        let isAdmin = false;
-        if (docSnap.exists) {
-          const userData = docSnap.data();
-          isAdmin = userData.userType === 'admin';
-        }
+        const isAdmin = docSnap.exists && docSnap.data().userType === 'admin';
 
         if (isAdmin) {
           adminContent.classList.remove('hidden');
@@ -234,42 +238,17 @@
           adminName.textContent = user.displayName || 'অ্যাডমিন';
           adminAvatar.textContent = (user.displayName || 'A').charAt(0).toUpperCase();
         } else {
-          // Non-admin: redirect to profile
-          window.location.href = 'profile.html';
+          accessDenied.classList.remove('hidden');
+          adminContent.classList.add('hidden');
         }
       } catch (error) {
-        console.error('Error checking admin role:', error);
-        window.location.href = 'profile.html';
+        console.error(error);
+        accessDenied.classList.remove('hidden');
+        adminContent.classList.add('hidden');
       }
     }
 
-    // --- AUTH STATE LISTENER ---
-    auth.onAuthStateChanged((user) => {
-      if (user) {
-        checkAdmin(user);
-      } else {
-        window.location.href = 'auth.html';
-      }
-    });
-
-    // --- LOGOUT ---
-    logoutBtn.addEventListener('click', async () => {
-      try {
-        await auth.signOut();
-        window.location.href = 'auth.html';
-      } catch (error) {
-        console.error('Logout error:', error);
-        showToast('লগআউট ব্যর্থ হয়েছে', 'error');
-      }
-    });
-
-    // --- SIDEBAR ACTIVE LINK ---
-    document.querySelectorAll('.sidebar-item').forEach(item => {
-      item.addEventListener('click', function() {
-        document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
-        this.classList.add('active');
-      });
-    });
+    auth.onAuthStateChanged(checkAdmin);
   </script>
 
 </body>
