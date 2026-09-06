@@ -10,16 +10,10 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- ===== Import Map for Firebase ===== -->
-  <script type="importmap">
-    {
-      "imports": {
-        "firebase/app": "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js",
-        "firebase/auth": "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js",
-        "firebase/firestore": "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js"
-      }
-    }
-  </script>
+  <!-- Firebase SDK (CDN) -->
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 
   <style>
     body { font-family: 'Inter', sans-serif; background: #f8fafc; }
@@ -48,6 +42,7 @@
     .divider:not(:empty)::after { margin-left: 16px; }
     .divider span { color: #94a3b8; font-size: 0.9rem; font-weight: 500; }
     .hidden { display: none !important; }
+    #recaptcha-container { margin: 10px 0; display: flex; justify-content: center; }
   </style>
 </head>
 <body>
@@ -129,6 +124,8 @@
               <input type="tel" id="phoneInput" class="form-input w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-[#1e40af] transition" placeholder="+880 1712-345678" value="+880" />
               <div id="phoneError" class="error-msg">সঠিক ফোন নম্বর দিন (যেমন: +8801712345678)</div>
             </div>
+            <!-- reCAPTCHA container -->
+            <div id="recaptcha-container"></div>
             <button id="sendCodeBtn" class="phone-btn w-full bg-[#0b2b4a] text-white py-4 rounded-2xl font-bold text-lg hover:bg-[#1e40af] transition shadow-lg flex items-center justify-center gap-3">
               <i class="fas fa-paper-plane"></i> কোড পাঠান
             </button>
@@ -211,19 +208,26 @@
   </a>
 </div>
 
-<!-- ===== Firebase Auth Script ===== -->
-<script type="module">
-  import { 
-    auth, 
-    onAuthStateChanged, 
-    signInWithPopup, 
-    googleProvider, 
-    signOut,
-    RecaptchaVerifier,
-    signInWithPhoneNumber
-  } from './firebase-config.js';
+<!-- ===================================================== -->
+<!-- ===== FIREBASE AUTH SCRIPT (Compat mode) ===== -->
+<!-- ===================================================== -->
+<script>
+  // Firebase Config
+  const firebaseConfig = {
+    apiKey: "AIzaSyBOpiCSVD8O-uT4CR4_-e9kGpZ1uVHFG54",
+    authDomain: "easy-namjari.firebaseapp.com",
+    projectId: "easy-namjari",
+    storageBucket: "easy-namjari.firebasestorage.app",
+    messagingSenderId: "686038387625",
+    appId: "1:686038387625:web:2a8eebba1b771844fcd2b8"
+  };
 
-  // DOM refs
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  // ===== DOM REFS =====
   const googleLoginBtn = document.getElementById('googleLoginBtn');
   const logoutBtn = document.getElementById('logoutBtn');
   const googleLoading = document.getElementById('googleLoading');
@@ -246,6 +250,7 @@
   const phoneSuccessMsg = document.getElementById('phoneSuccessMsg');
   const phoneStep1 = document.getElementById('phoneStep1');
   const phoneStep2 = document.getElementById('phoneStep2');
+  const recaptchaContainer = document.getElementById('recaptcha-container');
 
   let confirmationResult = null;
   let recaptchaVerifier = null;
@@ -321,7 +326,6 @@
     } else {
       userInfo.classList.add('hidden');
       loginForm.style.display = 'block';
-      // reset phone step
       phoneStep1.classList.remove('hidden');
       phoneStep2.classList.add('hidden');
       confirmationResult = null;
@@ -329,7 +333,7 @@
     }
   }
 
-  onAuthStateChanged(auth, (user) => {
+  auth.onAuthStateChanged(user => {
     updateUI(user);
   });
 
@@ -337,7 +341,8 @@
   googleLoginBtn.addEventListener('click', async () => {
     setGoogleLoading(true);
     try {
-      await signInWithPopup(auth, googleProvider);
+      const provider = new firebase.auth.GoogleAuthProvider();
+      await auth.signInWithPopup(provider);
       showGoogleSuccess('Google লগইন সফল!');
       setGoogleLoading(false);
       setTimeout(() => window.location.href = 'admin.html', 1000);
@@ -359,7 +364,7 @@
   // ===== LOGOUT =====
   logoutBtn.addEventListener('click', async () => {
     try {
-      await signOut(auth);
+      await auth.signOut();
       showGoogleSuccess('আপনি লগআউট করেছেন।');
       setTimeout(() => window.location.href = 'auth.html', 1000);
     } catch (error) {
@@ -371,10 +376,15 @@
   // ===== PHONE AUTH =====
   function initializeRecaptcha() {
     if (!recaptchaVerifier) {
-      recaptchaVerifier = new RecaptchaVerifier(auth, 'sendCodeBtn', {
-        size: 'invisible',
-        callback: () => {
-          // reCAPTCHA solved, allow signInWithPhoneNumber.
+      recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+        size: 'normal',
+        callback: function(response) {
+          // reCAPTCHA solved
+          console.log('reCAPTCHA solved');
+        },
+        'expired-callback': function() {
+          // reCAPTCHA expired
+          console.log('reCAPTCHA expired');
         }
       });
     }
@@ -391,8 +401,9 @@
     setPhoneLoading(true);
     try {
       const verifier = initializeRecaptcha();
+      // Render reCAPTCHA
       await verifier.render();
-      const result = await signInWithPhoneNumber(auth, phone, verifier);
+      const result = await auth.signInWithPhoneNumber(phone, verifier);
       confirmationResult = result;
       phoneStep1.classList.add('hidden');
       phoneStep2.classList.remove('hidden');
@@ -462,7 +473,7 @@
   });
 
   // Optional: auto redirect if already logged in
-  // onAuthStateChanged(auth, (user) => {
+  // auth.onAuthStateChanged(user => {
   //   if (user) window.location.href = 'admin.html';
   // });
 </script>
